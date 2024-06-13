@@ -16,6 +16,7 @@ import Fab from '@mui/material/Fab';
 import { IoMdSend } from "react-icons/io";
 import axios from 'axios';
 import { Stream } from 'stream';
+import { Near } from '../Near/Near';
 
 export const Chat = () => {
   const [message, setMessage] = useState('');
@@ -49,8 +50,7 @@ export const Chat = () => {
   }
   return (
       <div>
-          <Typography variant="h3">Transaction History WIP</Typography>
-          <Typography variant="h3">Wallet WIP</Typography>
+          <Near/>
           <Grid container>
               <Grid item xs={12} >
                   <Typography variant="h5" className="header-message">Experimental Chat</Typography>
