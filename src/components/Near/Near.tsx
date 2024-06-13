@@ -1,6 +1,7 @@
 import * as nearAPI from "near-api-js";
 import { useEffect, useState } from "react";
 import styles from './near.module.css'
+import { Typography } from "@mui/material";
 
 const { keyStores, WalletConnection, connect, Contract, ConnectedWalletAccount } = nearAPI;
 
@@ -8,7 +9,7 @@ export const Near = () => {
     const [wallet,setWallet] = useState<nearAPI.WalletConnection>() ;
     const [account, setAccount] = useState<nearAPI.ConnectedWalletAccount>();
     const [signedIn, setSignedIn] = useState<Boolean>(false);
-    const [allowed, setAllowed] = useState(false)
+    const [balance, setBalance] = useState()
 
     useEffect(() => {
         initialConnection()
@@ -51,7 +52,25 @@ export const Near = () => {
             // user is signed in
             setSignedIn(true);
             setWallet(walletConnection);
-            setAccount(walletConnection.account());  
+            setAccount(walletConnection.account());
+            const contract = new Contract(
+                walletConnection.account(), // the account object that is connecting
+                "debio-token3.testnet",
+                {
+                      // name of contract you're connecting to
+                    viewMethods: ["ft_balance_of"], // view methods do not change state but usually return a value
+                    changeMethods: [""], // change methods modify state
+                    useLocalViewExecution : true
+                }
+            );
+            const balance = await contract.ft_balance_of(
+                {
+                    "account_id": walletConnection.getAccountId(), // argument name and value - pass empty object if no args required
+                }
+            );
+            setBalance(balance)
+                
+            
           }
     }
 
@@ -62,7 +81,7 @@ export const Near = () => {
                 "dbio-burn1.testnet",
                 {
                   // name of contract you're connecting to
-                  viewMethods: [], // view methods do not change state but usually return a value
+                  viewMethods: ["ft_balance_of"], // view methods do not change state but usually return a value
                   changeMethods: ["burn"], // change methods modify state
                   useLocalViewExecution : true
                 }
@@ -74,8 +93,6 @@ export const Near = () => {
                 "300000000000000", // attached GAS (optional)
                 "1" // attached deposit in yoctoNEAR (optional)
               );
-            setAllowed(true);
-            console.log(allowed)
             
         }  
     }
@@ -84,6 +101,7 @@ export const Near = () => {
         <>
         <button onClick={initializeConnection}>Connect to Near</button>
         {signedIn && (<button className={styles.burn} onClick={burn}>Burn</button>)}
+        {balance && (<Typography className={styles.balance}>Balance is {balance} </Typography>)}
         </>
     )
 
