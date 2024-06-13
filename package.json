@@ -6,14 +6,20 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\""
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@mui/material": "^5.15.18",
+    "@near-wallet-selector/core": "^8.9.8",
+    "@near-wallet-selector/here-wallet": "^8.9.8",
+    "@near-wallet-selector/modal-ui": "^8.9.8",
+    "@near-wallet-selector/my-near-wallet": "^8.9.8",
     "axios": "^1.7.2",
     "near-api-js": "^4.0.2",
+    "near-wallet-selector": "^2.1.0",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
