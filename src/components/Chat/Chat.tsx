@@ -17,9 +17,13 @@ import { IoMdSend } from "react-icons/io";
 import axios from 'axios';
 import { Stream } from 'stream';
 import { Near } from '../Near/Near';
+import { useSearchParams } from 'next/navigation'
 
 export const Chat = () => {
   const [message, setMessage] = useState('');
+  const searchParams = useSearchParams();
+  const hash = searchParams.get("transactionHashes");
+
   //let message = '';
   const [chat, setChat] = useState([
       { from: 'AI', msg: 'Hello, this is a trial chat ai', time: "15:55" }
@@ -39,13 +43,20 @@ export const Chat = () => {
   }
 
   const addResponse = async (msg: string) => {
+    if (hash) {
+        const answer = await axios.post("https://x.myriadchain.com/llm/api/generate", {model:"llama3", prompt:msg, stream:false})
+        const time = new Date().toLocaleTimeString().slice(0, 5)
+        console.log(answer.data.response)
 
-    const answer = await axios.post("https://x.myriadchain.com/llm/api/generate", {model:"llama3", prompt:msg, stream:false})
-    const time = new Date().toLocaleTimeString().slice(0, 5)
-    console.log(answer.data.response)
-
-    const response = { from: 'AI', msg: answer.data.response, time }
-    return response
+        const response = { from: 'AI', msg: answer.data.response, time }
+        return response
+    }
+    else {
+        const time = new Date().toLocaleTimeString().slice(0, 5);
+        const forbidden = "You have not burnt token";
+        const response = { from: 'AI', msg: forbidden, time }
+        return response
+    }
 
   }
   return (
