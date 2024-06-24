@@ -1,6 +1,6 @@
 "use client";
 
-import { Chat } from "@/src/components/ChatV2/Chat";
+import { Chat } from "@/src/components/Chat/Chat";
 import { NearContext } from "@/src/contexts/NearContext";
 import { Wallet } from "@/src/services/near";
 import { useEffect, useState } from "react";
