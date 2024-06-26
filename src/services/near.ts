@@ -86,7 +86,8 @@ export class Wallet {
     method: string,
     args: Record<string, any> = {},
     gas = THIRTY_TGAS,
-    deposit = NO_DEPOSIT
+    deposit = NO_DEPOSIT,
+    callbackUrl = ''
   ) {
     // Sign a transaction with the "FunctionCall" action
     const selector = await this.selector()
@@ -94,6 +95,7 @@ export class Wallet {
 
     await selectedWallet.signAndSendTransaction({
       receiverId: contractId,
+      callbackUrl,
       actions: [
         {
           type: 'FunctionCall',
@@ -115,11 +117,6 @@ export class Wallet {
 
     // Retrieve transaction result from the network
     const transaction = await provider.txStatus(txhash, 'unnused')
-    console.log('transact', transaction)
-    const data = await providers.getTransactionLastResult(transaction)
-
-    console.log('data', data)
-
-    return data
+    return providers.getTransactionLastResult(transaction)
   }
 }

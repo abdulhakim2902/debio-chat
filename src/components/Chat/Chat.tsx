@@ -14,11 +14,21 @@ import Fab from '@mui/material/Fab'
 import { IoMdSend } from 'react-icons/io'
 import { useNear } from '@/src/hooks/useNear.hook'
 import { Button, Chip } from '@mui/material'
+import { useSearchParams, useRouter } from 'next/navigation'
 
 const BurnContract = process.env.NEXT_PUBLIC_BURN_CONTRACT ?? 'dbio-burn1.testnet'
 const TokenContract = process.env.NEXT_PUBLIC_TOKEN_CONTRACT ?? 'debio-token3.testnet'
+const BaseURL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
 
 export const Chat = () => {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+
+  const transactionHashes = searchParams?.get('transactionHashes')
+  const amount = searchParams?.get('amount')
+  const errorCode = searchParams?.get('errorCode')
+  const errorMessage = searchParams?.get('errorMessage')
+
   const { signedAccountId, wallet, onChangeSignedAccountId } = useNear()
 
   const [chat, setChat] = useState([{ from: 'AI', msg: 'Hello, this is a trial chat ai', time: '15:55' }])
@@ -35,6 +45,24 @@ export const Chat = () => {
   useEffect(() => {
     setIsLoggedIn(!!signedAccountId)
   }, [signedAccountId])
+
+  useEffect(() => {
+    if (wallet) {
+      // Success transaction
+      if (transactionHashes) {
+        console.log(amount)
+        console.log(transactionHashes)
+      }
+
+      // Failed transaction
+      if (errorCode || errorMessage) {
+        console.log(errorCode, errorMessage)
+      }
+
+      router.replace(BaseURL, undefined)
+    }
+    /* eslint-disable */
+  }, [wallet, transactionHashes, amount, errorCode, errorMessage])
 
   useEffect(() => {
     if (!isLoggedIn || !wallet || !signedAccountId) return console.log('You are not connected')
@@ -145,15 +173,15 @@ export const Chat = () => {
     try {
       const amount = '1' // 1 DBIO
       const parseAmount = parseUnits(Number(amount))
-      const tx = await wallet.callMethod(
+      const callbackUrl = `${BaseURL}?amount=${parseAmount}`
+      await wallet.callMethod(
         BurnContract,
         'burn',
         { token_id: TokenContract, amount: parseAmount },
         undefined,
-        '1'
+        '1',
+        callbackUrl
       )
-
-      console.log(tx)
     } catch (err) {
       console.log(err)
     }
