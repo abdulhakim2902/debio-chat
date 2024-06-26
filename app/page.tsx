@@ -16,7 +16,7 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <NearContext.Provider value={{ wallet, signedAccountId }}>
+      <NearContext.Provider value={{ wallet, signedAccountId, onChangeSignedAccountId: setSignedAccountId }}>
         <Chat />
       </NearContext.Provider>
     </main>
