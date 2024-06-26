@@ -51,7 +51,7 @@ export class Wallet {
   /**
    * Displays a modal to login the user
    */
-  signIn = async () => {
+  async signIn() {
     const selector = await this.selector()
     const modal = setupModal(selector, { contractId: this.createAccessKeyFor })
     modal.show()
@@ -60,10 +60,11 @@ export class Wallet {
   /**
    * Logout the user
    */
-  signOut = async () => {
+  async signOut(cb?: (value: '') => void) {
     const selector = await this.selector()
     const selectedWallet = await selector.wallet()
-    selectedWallet.signOut()
+    await selectedWallet.signOut()
+    cb && cb('')
   }
 
   async viewMethod<T>(contractId: string, method: string, args: Record<string, any> = {}): Promise<T> {
@@ -80,17 +81,18 @@ export class Wallet {
     return JSON.parse(Buffer.from(res.result).toString())
   }
 
-  callMethod = async (
+  async callMethod(
     contractId: string,
     method: string,
     args: Record<string, any> = {},
     gas = THIRTY_TGAS,
     deposit = NO_DEPOSIT
-  ) => {
+  ) {
     // Sign a transaction with the "FunctionCall" action
     const selector = await this.selector()
     const selectedWallet = await selector.wallet()
-    const outcome = await selectedWallet.signAndSendTransaction({
+
+    await selectedWallet.signAndSendTransaction({
       receiverId: contractId,
       actions: [
         {
@@ -104,26 +106,20 @@ export class Wallet {
         }
       ]
     })
-
-    if (outcome) {
-      return providers.getTransactionLastResult(outcome)
-    }
-
-    return null
   }
 
-  /**
-   * Makes a call to a contract
-   * @param {string} txhash - the transaction hash
-   * @returns {Promise<JSON.value>} - the result of the transaction
-   */
-  getTransactionResult = async (txhash: string) => {
+  async getTransactionResult(txhash: string) {
     const walletSelector = await this.selector()
     const { network } = walletSelector.options
     const provider = new providers.JsonRpcProvider({ url: network.nodeUrl })
 
     // Retrieve transaction result from the network
     const transaction = await provider.txStatus(txhash, 'unnused')
-    return providers.getTransactionLastResult(transaction)
+    console.log('transact', transaction)
+    const data = await providers.getTransactionLastResult(transaction)
+
+    console.log('data', data)
+
+    return data
   }
 }
