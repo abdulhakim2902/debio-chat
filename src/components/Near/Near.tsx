@@ -35,7 +35,7 @@ export const Near = () => {
           }
         else {
             await walletConnection.requestSignIn({
-                contractId: "dbio-burn1.testnet",
+                contractId: process.env.NEXT_PUBLIC_BURN_CONTRACT ?? "dbio-burn1.testnet",
                 methodNames: ["burn"], // optional
               });
               setSignedIn(true);
@@ -78,7 +78,7 @@ export const Near = () => {
         if (typeof(account) !== "undefined") {
             const contract = new Contract(
                 account, // the account object that is connecting
-                "dbio-burn1.testnet",
+                process.env.NEXT_PUBLIC_BURN_CONTRACT ?? "dbio-burn1.testnet",
                 {
                   // name of contract you're connecting to
                   viewMethods: ["ft_balance_of"], // view methods do not change state but usually return a value

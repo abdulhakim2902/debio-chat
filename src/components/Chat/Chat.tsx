@@ -15,20 +15,23 @@ import { IoMdSend } from 'react-icons/io'
 import { useNear } from '@/src/hooks/useNear.hook'
 import { Button, Chip } from '@mui/material'
 
-const BurnContract = 'dbio-burn1.testnet'
+const BurnContract = process.env.NEXT_PUBLIC_BURN_CONTRACT ?? 'dbio-burn1.testnet'
 const TokenContract = 'debio-token3.testnet'
 
 export const Chat = () => {
-  const { signedAccountId, wallet } = useNear()
+  const { signedAccountId, wallet } = useNear();
 
-  const [chat, setChat] = useState([{ from: 'AI', msg: 'Hello, this is a trial chat ai', time: '15:55' }])
-  const [message, setMessage] = useState('')
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [chat, setChat] = useState([{ from: 'AI', msg: 'Hello, this is a trial chat ai', time: '15:55' }]);
+  const [message, setMessage] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [balance, setBalance] = useState({
     near: 0,
     debio: 0,
     session: 0
-  })
+  });
+
+  const [model,setModel] = useState("Llama3");
+
 
   useEffect(() => {
     setIsLoggedIn(!!signedAccountId)
@@ -62,31 +65,61 @@ export const Chat = () => {
   const addMessage = async (from: string, msg: string) => {
     if (msg.trim() === '') return
     // get the current time hh:mm
-    const time = new Date().toLocaleTimeString().slice(0, 5)
-    setChat([...chat, { from, msg, time }])
-    setMessage('')
-    const resp = await addResponse(msg)
-    setChat([...chat, { from, msg, time }, resp])
+    const time = new Date().toLocaleTimeString().slice(0, 5);
+    setChat([...chat, { from, msg, time }]);
+    setMessage('');
+    const resp = await addResponse(msg);
+    setChat([...chat, { from, msg, time }, resp]);
   }
 
   const addResponse = async (msg: string) => {
+    if (model === "Llama3") {
+      return addResponseLLama3(msg);
+    }
+    else if (model === "OpenAI") {
+      return addResponseOpenAI(msg)
+    }
+    else {
+      throw new Error("Model Error")
+    }
+  }
+
+  const addResponseLLama3 = async (msg: string) => {
     if (balance.session > 0) {
       const answer = await axios.post('https://x.myriadchain.com/llm/api/generate', {
         model: 'llama3',
         prompt: msg,
         stream: false
-      })
-      const time = new Date().toLocaleTimeString().slice(0, 5)
-      console.log(answer.data.response)
+      });
+      const time = new Date().toLocaleTimeString().slice(0, 5);
 
-      const response = { from: 'AI', msg: answer.data.response, time }
+      const response = { from: 'AI', msg: answer.data.response, time };
 
       return response
     }
 
-    const time = new Date().toLocaleTimeString().slice(0, 5)
-    const forbidden = "You don't have session"
-    const response = { from: 'AI', msg: forbidden, time }
+    const time = new Date().toLocaleTimeString().slice(0, 5);
+    const forbidden = "You don't have session";
+    const response = { from: 'AI', msg: forbidden, time };
+
+    return response
+  }
+
+  const addResponseOpenAI = async (msg: string) => {
+    if (balance.session > 0) {
+      const answer = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/api/chat`,{
+        msg : msg,
+      });
+      const time = new Date().toLocaleTimeString().slice(0, 5);
+
+      const response = { from: 'AI', msg: answer.data.response, time };
+
+      return response
+    }
+
+    const time = new Date().toLocaleTimeString().slice(0, 5);
+    const forbidden = "You don't have session";
+    const response = { from: 'AI', msg: forbidden, time };
 
     return response
   }
@@ -94,6 +127,15 @@ export const Chat = () => {
   const onHandleConnection = () => {
     if (!wallet) return console.log('Wallet not initialized')
     return isLoggedIn ? wallet.signOut() : wallet.signIn()
+  }
+
+  const onChangeModel = () => {
+    if (model === "Llama3") {
+      setModel("OpenAI");
+    }
+    else {
+      setModel("Llama3");
+    }
   }
 
   const onBurn = async () => {
@@ -121,16 +163,23 @@ export const Chat = () => {
           color='error'
           variant='contained'
         >
-          Burn
+          Burn 1 DBIO
         </Button>
         <Button onClick={() => onHandleConnection()} color='primary' variant='outlined'>
           {isLoggedIn ? 'Disconnect' : 'Connect'}
+        </Button>
+        <Button
+          onClick={() => onChangeModel()}
+          color='error'
+          variant='contained'
+        >
+          Change Model
         </Button>
       </Box>
 
       {isLoggedIn && (
         <Box display='flex' justifyContent='space-between' marginBottom={5}>
-          <Chip label={`${formatUnits(balance.debio)} TOKEN`} color='primary' />
+          <Chip label={`${formatUnits(balance.debio)} DBIO`} color='primary' />
           <Chip label={`${formatUnits(balance.session)} SESSION`} color='success' />
         </Box>
       )}
@@ -139,6 +188,9 @@ export const Chat = () => {
         <Grid item xs={12}>
           <Typography variant='h5' className='header-message'>
             Experimental Chat
+          </Typography>
+          <Typography variant='h5' className='header-message'>
+            Model : {model}
           </Typography>
         </Grid>
       </Grid>
