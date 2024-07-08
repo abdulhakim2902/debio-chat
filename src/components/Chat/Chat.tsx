@@ -13,14 +13,20 @@ import Fab from '@mui/material/Fab'
 
 import { IoMdSend } from 'react-icons/io'
 import { useNear } from '@/src/hooks/useNear.hook'
-import { Button, Chip } from '@mui/material'
+import { Avatar, Button, Card, Chip, Container } from '@mui/material'
 import { useSearchParams, useRouter } from 'next/navigation'
 
 const BurnContract = process.env.NEXT_PUBLIC_BURN_CONTRACT ?? 'dbio-burn1.testnet'
 const TokenContract = process.env.NEXT_PUBLIC_TOKEN_CONTRACT ?? 'debio-token3.testnet'
 const BaseURL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
 
-export const Chat = () => {
+type ChatProps = {
+  isMobile?: boolean
+};
+
+export const Chat : React.FC<ChatProps> = props => {
+  const {isMobile } = props;
+  console.log(isMobile)
   const searchParams = useSearchParams()
   const router = useRouter()
 
@@ -44,6 +50,7 @@ export const Chat = () => {
 
   useEffect(() => {
     setIsLoggedIn(!!signedAccountId)
+    console.log(signedAccountId)
   }, [signedAccountId])
 
   useEffect(() => {
@@ -70,14 +77,12 @@ export const Chat = () => {
     const getBalance = async () => {
       try {
         const [account, debioBalance] = await Promise.all([
-          wallet.viewMethod<{ burn_amount: number; session: number }>(BurnContract, 'get_account_session', {
-            token_id: TokenContract,
-            account_id: signedAccountId
-          }),
+          axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/token?userId=${signedAccountId}`),
           wallet.viewMethod<string>(TokenContract, 'ft_balance_of', { account_id: signedAccountId })
         ])
+        console.log("acount is",account?.data?.response)
 
-        setBalance(prev => ({ ...prev, session: account?.session || 0, debio: Number(debioBalance) }))
+        setBalance(prev => ({ ...prev, session: account?.data?.response.tokens || 0, debio: Number(debioBalance) }))
       } catch (err) {
         console.log(err)
       }
@@ -118,6 +123,7 @@ export const Chat = () => {
         stream: false
       })
       const time = new Date().toLocaleTimeString().slice(0, 5)
+      console.log("Answer is", answer)
 
       const response = { from: 'AI', msg: answer.data.response, time }
 
@@ -197,6 +203,26 @@ export const Chat = () => {
 
   return (
     <div>
+    {isMobile && (
+      <Container sx={{bgcolor: 'pink', height: 60, position:'fixed', top:0, left:0}} maxWidth={'md'}>
+        <Typography sx={{position:'fixed',top:13,right:17}}>Balance: $DBIO {balance.debio} </Typography>
+        <Avatar alt='debio' src='public/debio-logo.svg' sx={{position:'fixed', height:40, width:40, left:10, top:10}}></Avatar>
+        <TextField
+                id='outlined-basic-email'
+                InputProps={{
+                  disableUnderline: true
+                }}
+                onChange={handleChange}
+                value={message}
+                label='Type Something'
+                fullWidth
+                sx={{position:'fixed',left:13,bottom: 21}}
+              />
+        
+      </Container>
+    )}
+    {!isMobile && (
+      <>
       <Box display='flex' justifyContent='space-between' alignItems='center' gap={10} marginBottom={5}>
         <Button
           disabled={balance.debio <= 0}
@@ -221,7 +247,6 @@ export const Chat = () => {
           <Chip label={`${balance.session} SESSION`} color='success' />
         </Box>
       )}
-
       <Grid container>
         <Grid item xs={12}>
           <Typography variant='h5' className='header-message'>
@@ -270,6 +295,10 @@ export const Chat = () => {
           </Grid>
         </Grid>
       </Grid>
+      </>
+      )}
+
+      
     </div>
   )
 }
