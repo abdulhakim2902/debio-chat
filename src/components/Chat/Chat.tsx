@@ -10,11 +10,10 @@ import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import ListItemText from '@mui/material/ListItemText'
 import Fab from '@mui/material/Fab'
-
-import { IoMdSend } from 'react-icons/io'
 import { useNear } from '@/src/hooks/useNear.hook'
-import { Avatar, Button, Card, Chip, Container } from '@mui/material'
+import { Avatar, Button, Card, Chip, Container, IconButton } from '@mui/material'
 import { useSearchParams, useRouter } from 'next/navigation'
+import { IoMdSend } from 'react-icons/io'
 
 const BurnContract = process.env.NEXT_PUBLIC_BURN_CONTRACT ?? 'dbio-burn1.testnet'
 const TokenContract = process.env.NEXT_PUBLIC_TOKEN_CONTRACT ?? 'debio-token3.testnet'
@@ -22,10 +21,10 @@ const BaseURL = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
 
 type ChatProps = {
   isMobile?: boolean
-};
+}
 
-export const Chat : React.FC<ChatProps> = props => {
-  const {isMobile } = props;
+export const Chat: React.FC<ChatProps> = props => {
+  const { isMobile } = props
   console.log(isMobile)
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -80,7 +79,7 @@ export const Chat : React.FC<ChatProps> = props => {
           axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/token?userId=${signedAccountId}`),
           wallet.viewMethod<string>(TokenContract, 'ft_balance_of', { account_id: signedAccountId })
         ])
-        console.log("acount is",account?.data?.response)
+        console.log('acount is', account?.data?.response)
 
         setBalance(prev => ({ ...prev, session: account?.data?.response.tokens || 0, debio: Number(debioBalance) }))
       } catch (err) {
@@ -123,7 +122,7 @@ export const Chat : React.FC<ChatProps> = props => {
         stream: false
       })
       const time = new Date().toLocaleTimeString().slice(0, 5)
-      console.log("Answer is", answer)
+      console.log('Answer is', answer)
 
       const response = { from: 'AI', msg: answer.data.response, time }
 
@@ -203,102 +202,128 @@ export const Chat : React.FC<ChatProps> = props => {
 
   return (
     <div>
-    {isMobile && (
-      <Container sx={{bgcolor: 'pink', height: 60, position:'fixed', top:0, left:0}} maxWidth={'md'}>
-        <Typography sx={{position:'fixed',top:13,right:17}}>Balance: $DBIO {balance.debio} </Typography>
-        <Avatar alt='debio' src='public/debio-logo.svg' sx={{position:'fixed', height:40, width:40, left:10, top:10}}></Avatar>
-        <TextField
-                id='outlined-basic-email'
-                InputProps={{
-                  disableUnderline: true
-                }}
-                onChange={handleChange}
-                value={message}
-                label='Type Something'
-                fullWidth
-                sx={{position:'fixed',left:13,bottom: 21}}
-              />
-        
-      </Container>
-    )}
-    {!isMobile && (
-      <>
-      <Box display='flex' justifyContent='space-between' alignItems='center' gap={10} marginBottom={5}>
-        <Button
-          disabled={balance.debio <= 0}
-          sx={{ visibility: isLoggedIn ? 'visible' : 'hidden' }}
-          onClick={() => onBurn()}
-          color='error'
-          variant='contained'
-        >
-          Burn 1 DBIO
-        </Button>
-        <Button onClick={() => onHandleConnection()} color='primary' variant='outlined'>
-          {isLoggedIn ? 'Disconnect' : 'Connect'}
-        </Button>
-        <Button onClick={() => onChangeModel()} color='error' variant='contained'>
-          Change Model
-        </Button>
-      </Box>
-
-      {isLoggedIn && (
-        <Box display='flex' justifyContent='space-between' marginBottom={5}>
-          <Chip label={`${formatUnits(balance.debio)} DBIO`} color='primary' />
-          <Chip label={`${balance.session} SESSION`} color='success' />
-        </Box>
+      {isMobile && (
+        <Container sx={{ bgcolor: '#551149', height: 60, position: 'fixed', top: 0, left: 0 }} maxWidth={'md'}>
+          <Typography
+            color={'#FFFFFF'}
+            sx={{ position: 'fixed', top: 13, right: 17, fontSize: 10, fontFamily: 'Open Sans' }}
+          >
+            {' '}
+            <b>Balance</b>: $DBIO {balance.debio}{' '}
+          </Typography>
+          <Avatar
+            alt='debio'
+            src='public/debio-logo.svg'
+            sx={{ position: 'fixed', height: 40, width: 40, left: 10, top: 10 }}
+          ></Avatar>
+          <div style={{ position: 'fixed', left: 57, top: 21 }}>
+            <Typography color={'#FFFFFF'} sx={{ fontSize: 12, fontFamily: 'Open Sans' }}>
+              {model.toUpperCase()}
+            </Typography>
+          </div>
+        </Container>
       )}
-      <Grid container>
-        <Grid item xs={12}>
-          <Typography variant='h5' className='header-message'>
-            Experimental Chat
-          </Typography>
-          <Typography variant='h5' className='header-message'>
-            Model : {model}
-          </Typography>
-        </Grid>
-      </Grid>
-      <Grid container component={Paper}>
-        <Grid item xs={12}>
-          <List>
-            {chat.map((c, i) => (
-              <ListItem key={i}>
-                <Grid container>
-                  <Grid item xs={12}>
-                    <ListItemText primary={c.msg}></ListItemText>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <ListItemText secondary={c.from + ' at ' + c.time}></ListItemText>
-                  </Grid>
-                </Grid>
-              </ListItem>
-            ))}
-          </List>
-          <Divider />
-          <Grid container style={{ padding: '20px' }}>
-            <Grid item xs={11}>
-              <TextField
-                id='outlined-basic-email'
-                InputProps={{
-                  disableUnderline: true
-                }}
-                onChange={handleChange}
-                value={message}
-                label='Type Something'
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={1}>
-              <Fab color='primary' onClick={() => addMessage('ME', message)} aria-label='add'>
-                <IoMdSend />
-              </Fab>
+      {!isMobile && (
+        <>
+          <Box display='flex' justifyContent='space-between' alignItems='center' gap={10} marginBottom={5}>
+            <Button
+              disabled={balance.debio <= 0}
+              sx={{ visibility: isLoggedIn ? 'visible' : 'hidden' }}
+              onClick={() => onBurn()}
+              color='error'
+              variant='contained'
+            >
+              Burn 1 DBIO
+            </Button>
+            <Button onClick={() => onHandleConnection()} color='primary' variant='outlined'>
+              {isLoggedIn ? 'Disconnect' : 'Connect'}
+            </Button>
+            <Button onClick={() => onChangeModel()} color='error' variant='contained'>
+              Change Model
+            </Button>
+          </Box>
+
+          {isLoggedIn && (
+            <Box display='flex' justifyContent='space-between' marginBottom={5}>
+              <Chip label={`${formatUnits(balance.debio)} DBIO`} color='primary' />
+              <Chip label={`${balance.session} SESSION`} color='success' />
+            </Box>
+          )}
+          <Grid container>
+            <Grid item xs={12}>
+              <Typography variant='h5' className='header-message'>
+                Experimental Chat
+              </Typography>
+              <Typography variant='h5' className='header-message'>
+                Model : {model}
+              </Typography>
             </Grid>
           </Grid>
-        </Grid>
-      </Grid>
-      </>
+          <Grid container component={Paper}>
+            <Grid item xs={12}>
+              <List>
+                {chat.map((c, i) => (
+                  <ListItem key={i}>
+                    <Grid container>
+                      <Grid item xs={12}>
+                        <ListItemText primary={c.msg}></ListItemText>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <ListItemText secondary={c.from + ' at ' + c.time}></ListItemText>
+                      </Grid>
+                    </Grid>
+                  </ListItem>
+                ))}
+              </List>
+              <Divider />
+              <Grid container style={{ padding: '20px' }}>
+                <Grid item xs={11}>
+                  <TextField
+                    id='outlined-basic-email'
+                    InputProps={{
+                      disableUnderline: true
+                    }}
+                    onChange={handleChange}
+                    value={message}
+                    label='Type Something'
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={1}>
+                  <Fab color='primary' onClick={() => addMessage('ME', message)} aria-label='add'>
+                    <IoMdSend />
+                  </Fab>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </>
       )}
 
-      
+      {isMobile && (
+        <>
+          <TextField
+            id='outlined-basic-email'
+            InputProps={{
+              disableUnderline: true
+            }}
+            onChange={handleChange}
+            value={message}
+            label='Type Something'
+            sx={{ position: 'fixed', left: 13, bottom: 21, right: 70 }}
+          />
+          <div style={{ position: 'fixed', right: 6, bottom: 21 }}>
+            <Fab
+              color='primary'
+              onClick={() => addMessage('ME', message)}
+              aria-label='add'
+              sx={{ position: 'sticky', right: 6, bottom: 21 }}
+            >
+              <IoMdSend />
+            </Fab>
+          </div>
+        </>
+      )}
     </div>
   )
 }
