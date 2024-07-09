@@ -1,14 +1,14 @@
-import { createContext } from 'react'
-import { Wallet } from '../services/near'
+import { Wallet } from '@/src/near'
+import { createContext, useContext } from 'react'
 
-export type NearContextValue = {
+type NearContextValue = {
   wallet?: Wallet
-  signedAccountId?: string
-  onChangeSignedAccountId: (value: string) => void
+  signedAccountId: string
 }
 
 export const NearContext = createContext<NearContextValue>({
   wallet: undefined,
-  signedAccountId: undefined,
-  onChangeSignedAccountId: () => ({})
+  signedAccountId: ''
 })
+
+export const useNearWallet = () => useContext(NearContext)

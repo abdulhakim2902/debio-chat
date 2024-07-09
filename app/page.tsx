@@ -1,14 +1,29 @@
 "use client";
 
-import { Chat } from "@/src/components/Chat/Chat";
+import useMediaQuery from '@mui/material/useMediaQuery';
+
 import { NearContext } from "@/src/contexts/NearContext";
-import { Wallet } from "@/src/services/near";
 import { useEffect, useState } from "react";
 import { useTheme, createTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { ThemeProvider } from "@emotion/react";
+import { BurnContract, NetworkId } from '@/src/config'
+import { Wallet } from "@/src/near";
+import { ContractProvider } from "@/src/contexts/ContractContext";
+import { Chat } from '@/src/components/Chat';
 
-const wallet = new Wallet('testnet', 'debio-test2.testnet');
+const wallet = new Wallet({
+  createAccessKeyFor: BurnContract,
+  networkId: NetworkId,
+  methodNames: ['use_session']
+})
+
+const themes = createTheme({
+  palette: {
+    primary: {
+      main : '#FF56E0'
+    },
+  },
+});
 
 export default function Home() {
   const [signedAccountId, setSignedAccountId] = useState('');
@@ -17,23 +32,17 @@ export default function Home() {
     wallet.startUp(setSignedAccountId)
   }, [])
 
-  const themes = createTheme({
-    palette: {
-      primary: {
-        main : '#FF56E0'
-      },
-    },
-  });
-
   const theme = useTheme()
   const isMobile = !useMediaQuery(theme.breakpoints.up('md'));
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <NearContext.Provider value={{ wallet, signedAccountId, onChangeSignedAccountId: setSignedAccountId }}>
-        <ThemeProvider theme={themes}>
-          <Chat isMobile={isMobile}/>
-        </ThemeProvider>
+      <NearContext.Provider value={{ wallet, signedAccountId }}>
+        <ContractProvider>
+          <ThemeProvider theme={themes}>
+            <Chat isMobile={isMobile}/>
+          </ThemeProvider>
+        </ContractProvider>
       </NearContext.Provider>
     </main>
   );
