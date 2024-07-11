@@ -59,24 +59,29 @@ export const Header = () => {
     <Fragment>
       <Box
         display='flex'
-        justifyContent='space-between'
-        sx={{ backgroundColor: 'whitesmoke', marginX: 'auto', visibility: signedAccountId ? 'visible' : 'hidden' }}
+        justifyContent={signedAccountId ? 'space-between' : 'flex-end'}
+        sx={{ backgroundColor: 'whitesmoke', marginX: 'auto' }}
         padding={2}
         borderRadius={2}
       >
-        <Box>
-          <Button
-            variant='outlined'
-            disableRipple
-            sx={{ opacity: signedAccountId ? 1 : 0, cursor: 'default', height: '37px' }}
-          >
-            {signedAccountId}
-          </Button>
-          <Box marginTop={1} sx={{ color: 'GrayText' }}>
-            <Typography>Total Balance: {loading.balance ? <CircularProgress size={15} /> : token.formatted}</Typography>
-            <Typography>Total Session: {loading.balance ? <CircularProgress size={15} /> : session}</Typography>
+        {signedAccountId && (
+          <Box>
+            <Button
+              variant='outlined'
+              disableRipple
+              sx={{ opacity: signedAccountId ? 1 : 0, cursor: 'default', height: '37px' }}
+            >
+              {signedAccountId}
+            </Button>
+            <Box marginTop={1} sx={{ color: 'GrayText' }}>
+              <Typography>
+                Total Balance: {loading.balance ? <CircularProgress size={15} /> : token.formatted}
+              </Typography>
+              <Typography>Total Session: {loading.balance ? <CircularProgress size={15} /> : session}</Typography>
+            </Box>
           </Box>
-        </Box>
+        )}
+
         <Button variant='contained' onClick={action} sx={{ width: '100px', height: '37px' }}>
           {label === true ? <CircularProgress size={25} color='info' /> : label}
         </Button>
@@ -89,10 +94,10 @@ export const Header = () => {
         marginTop={2}
       >
         <Box display='flex' justifyContent='space-between'>
-          <Button variant='outlined' color='error' onClick={() => setOpenBurnModal(true)}>
+          <Button variant='outlined' color='error' disabled={!signedAccountId} onClick={() => setOpenBurnModal(true)}>
             Burn
           </Button>
-          <Button variant='contained' color='info' onClick={() => setOpenBuyModal(true)}>
+          <Button variant='contained' color='info' disabled={!signedAccountId} onClick={() => setOpenBuyModal(true)}>
             Buy {token.symbol}
           </Button>
         </Box>

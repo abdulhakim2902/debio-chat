@@ -3,6 +3,7 @@ import { useNearWallet } from './NearContext'
 import { BurnContract, TokenContract } from '@/src/config'
 import { formatUnits, parseUnits } from '@/src/utils/number'
 import { enqueueSnackbar } from 'notistack'
+import { parseNearAmount } from 'near-api-js/lib/utils/format'
 
 type ContractContextValue = {
   loading: {
@@ -175,7 +176,7 @@ export const ContractProvider: FC<ContractProviderProps> = ({ children }) => {
         contractId: TokenContract,
         method: 'buy',
         args: { amount: tokenAmount },
-        deposit: '1'
+        deposit: String(parseNearAmount('0.00125'))
       })
     } catch (err: any) {
       enqueueSnackbar(err?.message || err, { variant: 'error' })
