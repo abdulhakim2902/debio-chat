@@ -14,8 +14,10 @@ import {
 import { useChat } from '@/src/contexts/ChatContext'
 
 import SendIcon from '@mui/icons-material/Send'
+import { useNearWallet } from '@/src/contexts/NearContext'
 
 export const Chat = () => {
+  const { signedAccountId } = useNearWallet()
   const { model, message, chats, loading, onChangeMessage, onChangeModel, onSendMessage } = useChat()
 
   return (
@@ -37,7 +39,7 @@ export const Chat = () => {
               {model}
             </Button>
 
-            <Button variant='contained' color='secondary' onClick={onChangeModel}>
+            <Button variant='contained' color='secondary' onClick={onChangeModel} disabled={!signedAccountId}>
               Change Model
             </Button>
           </Box>
@@ -75,7 +77,7 @@ export const Chat = () => {
             />
             <IconButton
               onClick={() => onSendMessage('ME', message)}
-              disabled={loading}
+              disabled={loading || !signedAccountId}
               sx={{ backgroundColor: '#eff1f1', padding: 2 }}
             >
               {loading ? <CircularProgress size={20} /> : <SendIcon color='info' fontSize='small' />}
