@@ -1,15 +1,52 @@
 import { useChat } from '@/src/contexts/ChatContext'
-import { Fab, TextField } from '@mui/material'
 import { FC, Fragment } from 'react'
 import { IoMdSend } from 'react-icons/io'
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Divider,
+  Grid,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  TextField,
+  Typography,
+  Fab,
+  Chip,
+  Stack,
+  Container,
+  SxProps
+} from '@mui/material'
+
+import { ChatBox } from './Chatbox'
 
 export type ChatProps = {}
 
 export const Chat: FC<ChatProps> = ({}) => {
   const { model, message, chats, loading, onChangeMessage, onChangeModel, onSendMessage } = useChat()
 
+  const colorHandler = (input: string) => {
+    if (input === 'AI') {
+      return 'primary'
+    } else {
+      return 'secondary'
+    }
+  }
+
   return (
-    <Fragment>
+    <Container maxWidth={'md'} sx={{ position: 'absolute', top: 80, left: 0, bottom: 30 }}>
+      <div
+        style={{
+          position: 'relative',
+          width: '100%'
+        }}
+      >
+        {chats.map((c, i) => (
+          <ChatBox msg={c.msg} user={c.from === 'ME'}></ChatBox>
+        ))}
+      </div>
       <TextField
         id='outlined-basic-email'
         InputProps={{
@@ -30,6 +67,6 @@ export const Chat: FC<ChatProps> = ({}) => {
           <IoMdSend />
         </Fab>
       </div>
-    </Fragment>
+    </Container>
   )
 }
