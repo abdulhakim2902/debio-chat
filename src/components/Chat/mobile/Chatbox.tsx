@@ -21,6 +21,8 @@ export const ChatBox: FC<ChatboxProps> = ({ user, msg }) => {
             color='primary'
             sx={{
               position: 'relative',
+              top: 5,
+              float: 'left',
               maxWidth: '90%',
               height: 'auto',
               '& .MuiChip-label': {
@@ -33,7 +35,7 @@ export const ChatBox: FC<ChatboxProps> = ({ user, msg }) => {
         </Container>
         <div
           style={{
-            paddingBottom: 3
+            paddingBottom: 15
           }}
         ></div>
       </>
@@ -52,6 +54,7 @@ export const ChatBox: FC<ChatboxProps> = ({ user, msg }) => {
             color='secondary'
             sx={{
               position: 'relative',
+              top: 5,
               marginRight: 'auto',
               float: 'right',
               marginLeft: 2,
@@ -67,7 +70,7 @@ export const ChatBox: FC<ChatboxProps> = ({ user, msg }) => {
         </Container>
         <div
           style={{
-            paddingBottom: 3
+            paddingBottom: 15
           }}
         ></div>
       </>

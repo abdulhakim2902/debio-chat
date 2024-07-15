@@ -37,17 +37,20 @@ export const Chat: FC<ChatProps> = ({}) => {
 
   return (
     <>
-    <Container maxWidth={'md'} sx={{ position: 'fixed', top: 80, left: 0, bottom: 100, overflowY: 'scroll', display: 'flex' }}>
-      <div
-        style={{
-          position: 'relative',
-          width: '100%'
-        }}
+      <Container
+        maxWidth={'md'}
+        sx={{ position: 'fixed', top: 80, left: 0, bottom: 100, overflowY: 'scroll', display: 'flex' }}
       >
-        {chats.map((c, i) => (
-          <ChatBox msg={c.msg} user={c.from === 'ME'}></ChatBox>
-        ))}
-      </div>
+        <div
+          style={{
+            position: 'relative',
+            width: '100%'
+          }}
+        >
+          {chats.map((c, i) => (
+            <ChatBox msg={c.msg} user={c.from === 'ME'}></ChatBox>
+          ))}
+        </div>
       </Container>
       <TextField
         id='outlined-basic-email'
@@ -69,7 +72,6 @@ export const Chat: FC<ChatProps> = ({}) => {
           <IoMdSend />
         </Fab>
       </div>
-      </>
-    
+    </>
   )
 }
