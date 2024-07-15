@@ -36,7 +36,8 @@ export const Chat: FC<ChatProps> = ({}) => {
   }
 
   return (
-    <Container maxWidth={'md'} sx={{ position: 'absolute', top: 80, left: 0, bottom: 30 }}>
+    <>
+    <Container maxWidth={'md'} sx={{ position: 'fixed', top: 80, left: 0, bottom: 100, overflowY: 'scroll', display: 'flex' }}>
       <div
         style={{
           position: 'relative',
@@ -47,6 +48,7 @@ export const Chat: FC<ChatProps> = ({}) => {
           <ChatBox msg={c.msg} user={c.from === 'ME'}></ChatBox>
         ))}
       </div>
+      </Container>
       <TextField
         id='outlined-basic-email'
         InputProps={{
@@ -62,11 +64,12 @@ export const Chat: FC<ChatProps> = ({}) => {
           color='primary'
           onClick={() => onSendMessage('ME', message)}
           aria-label='add'
-          sx={{ position: 'sticky', right: 6, bottom: 21 }}
+          sx={{ position: 'fixed', right: 6, bottom: 21 }}
         >
           <IoMdSend />
         </Fab>
       </div>
-    </Container>
+      </>
+    
   )
 }
