@@ -13,7 +13,9 @@ export const ChatBox: FC<ChatboxProps> = ({ user, msg }) => {
         <Container
           sx={{
             height: 'auto',
-            maxHeight: 400
+            display: 'column',
+            gridColumn: 10,
+            gridAutoFlow: 'column'
           }}
         >
           <Chip
@@ -23,7 +25,8 @@ export const ChatBox: FC<ChatboxProps> = ({ user, msg }) => {
               position: 'relative',
               top: 5,
               float: 'left',
-              maxWidth: '90%',
+              marginTop: 2,
+              maxWidth: '92%',
               height: 'auto',
               '& .MuiChip-label': {
                 display: 'block',
@@ -35,7 +38,7 @@ export const ChatBox: FC<ChatboxProps> = ({ user, msg }) => {
         </Container>
         <div
           style={{
-            paddingBottom: 15
+            paddingBottom: 25
           }}
         ></div>
       </>
@@ -46,7 +49,9 @@ export const ChatBox: FC<ChatboxProps> = ({ user, msg }) => {
         <Container
           sx={{
             height: 'auto',
-            maxHeight: 400
+            display: 'column',
+            gridColumn: 10,
+            gridAutoFlow: 'column'
           }}
         >
           <Chip
@@ -57,8 +62,8 @@ export const ChatBox: FC<ChatboxProps> = ({ user, msg }) => {
               top: 5,
               marginRight: 'auto',
               float: 'right',
-              marginLeft: 2,
-              maxWidth: '90%',
+              marginTop: 2,
+              maxWidth: '92%',
               height: 'auto',
               '& .MuiChip-label': {
                 display: 'block',
@@ -70,7 +75,7 @@ export const ChatBox: FC<ChatboxProps> = ({ user, msg }) => {
         </Container>
         <div
           style={{
-            paddingBottom: 15
+            paddingBottom: 25
           }}
         ></div>
       </>

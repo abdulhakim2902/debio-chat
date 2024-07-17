@@ -27,19 +27,10 @@ export type ChatProps = {}
 export const Chat: FC<ChatProps> = ({}) => {
   const { model, message, chats, loading, onChangeMessage, onChangeModel, onSendMessage } = useChat()
 
-  const colorHandler = (input: string) => {
-    if (input === 'AI') {
-      return 'primary'
-    } else {
-      return 'secondary'
-    }
-  }
-
   return (
-    <>
       <Container
         maxWidth={'md'}
-        sx={{ position: 'fixed', top: 80, left: 0, bottom: 100, overflowY: 'scroll', display: 'flex' }}
+        sx={{ position: 'fixed', top: 80, left: 0, bottom: 130, overflowY: 'scroll', display: 'flex' }}
       >
         <div
           style={{
@@ -52,26 +43,5 @@ export const Chat: FC<ChatProps> = ({}) => {
           ))}
         </div>
       </Container>
-      <TextField
-        id='outlined-basic-email'
-        InputProps={{
-          disableUnderline: true
-        }}
-        onChange={event => onChangeMessage(event.target.value)}
-        value={message}
-        label='Type Something'
-        sx={{ position: 'fixed', left: 13, bottom: 21, right: 70 }}
-      />
-      <div style={{ position: 'fixed', right: 6, bottom: 21 }}>
-        <Fab
-          color='primary'
-          onClick={() => onSendMessage('ME', message)}
-          aria-label='add'
-          sx={{ position: 'fixed', right: 6, bottom: 21 }}
-        >
-          <IoMdSend />
-        </Fab>
-      </div>
-    </>
   )
 }
