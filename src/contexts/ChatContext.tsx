@@ -81,7 +81,7 @@ export const ChatProvider: FC<ChatProviderProps> = ({ children }) => {
 
     try {
       const answer = await axios.post('https://x.myriadchain.com/llm/api/generate', {
-        model: 'llama3',
+        model: 'mendel',
         prompt: msg,
         stream: false
       })
