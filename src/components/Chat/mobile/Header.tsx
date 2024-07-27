@@ -9,10 +9,10 @@ import { useState } from 'react'
 type HeaderProps = {
   model: string
   token: Token
-  session: number
+  conversation: number
 }
 
-export const Header: FC<HeaderProps> = ({ model, token, session }) => {
+export const Header: FC<HeaderProps> = ({ model, token, conversation }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -36,7 +36,7 @@ export const Header: FC<HeaderProps> = ({ model, token, session }) => {
           sx={{ position: 'absolute', top: 28, right: 17, fontSize: 10, fontFamily: 'Open Sans' }}
         >
           {' '}
-          <b>Session</b>: {session}{' '}
+          <b>Session</b>: {conversation}{' '}
         </Typography>
         <Avatar
           alt='debio'

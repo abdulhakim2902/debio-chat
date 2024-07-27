@@ -6,12 +6,12 @@ import { useContract } from '@/src/contexts/ContractContext'
 import { FooterChat } from './Footer'
 
 export const MobileChat = () => {
-  const { token, session } = useContract()
+  const { token, conversation } = useContract()
   const { model } = useChat()
 
   return (
     <Fragment>
-      <Header model={model} token={token} session={session} />
+      <Header model={model} token={token} conversation={conversation.balance} />
       <Chat />
       <FooterChat />
     </Fragment>

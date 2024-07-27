@@ -17,7 +17,7 @@ import {
 
 export const FooterChat = () => {
   const { model, message, onChangeMessage, onChangeModel, onSendMessage } = useChat()
-  const { loading, token, session, burn, buy } = useContract()
+  const { loading, token, conversation, burn, buy } = useContract()
   const [openBurnModal, setOpenBurnModal] = useState(false)
   const [openBuyModal, setOpenBuyModal] = useState(false)
   const [burnAmount, setBurnAmount] = useState('')

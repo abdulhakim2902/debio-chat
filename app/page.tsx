@@ -15,7 +15,7 @@ import { SnackbarProvider } from 'notistack';
 const wallet = new Wallet({
   createAccessKeyFor: BurnContract,
   networkId: NetworkId,
-  methodNames: ['use_session']
+  methodNames: ['converse']
 })
 
 const themes = createTheme({

@@ -9,15 +9,15 @@ type ContractContextValue = {
   loading: {
     buy: boolean
     burn: boolean
-    session: boolean
     balance: boolean
+    conversation: boolean
   }
-  session: number
+  conversation: Omit<Token, 'symbol'>
   token: Token
   balance: () => void
   buy: (amount?: string) => void
   burn: (amount?: string) => void
-  take: (amount?: string, cb?: (err: unknown) => void) => void
+  converse: (amount?: string, cb?: (err: unknown) => void) => void
 }
 
 export type Token = {
@@ -31,16 +31,16 @@ export const ContractContext = createContext<ContractContextValue>({
   loading: {
     buy: false,
     burn: false,
-    session: false,
-    balance: false
+    balance: false,
+    conversation: false
   },
-  session: 0,
+  conversation: { balance: 0, decimals: 18, formatted: '0' },
   token: { balance: 0, decimals: 18, symbol: '', formatted: '0' },
 
   balance: () => {},
   buy: () => {},
   burn: () => {},
-  take: () => {}
+  converse: () => {}
 })
 
 type ContractProviderProps = {
@@ -53,23 +53,22 @@ export const ContractProvider: FC<ContractProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState({
     buy: false,
     burn: false,
-    session: false,
-    balance: false
+    balance: false,
+    conversation: false
   })
 
-  const [session, setSession] = useState(0)
+  const [conversation, setConversation] = useState({ balance: 0, decimals: 18, formatted: '0' })
   const [token, setToken] = useState({ balance: 0, decimals: 18, symbol: '', formatted: '0' })
 
   const balance = useCallback(async () => {
     try {
-      console.log('balance')
       setLoading(prev => ({ ...prev, balance: true }))
 
       if (!signedAccountId || !wallet) {
         throw 'WALLET_NOT_CONNECTED'
       }
 
-      const [tokenBalance, tokenMetadata, { session }] = await Promise.all([
+      const [tokenBalance, tokenMetadata, conversation] = await Promise.all([
         wallet.viewMethod({
           contractId: TokenContract,
           method: 'ft_balance_of',
@@ -78,7 +77,7 @@ export const ContractProvider: FC<ContractProviderProps> = ({ children }) => {
         wallet.viewMethod({ contractId: TokenContract, method: 'ft_metadata' }),
         wallet.viewMethod({
           contractId: BurnContract,
-          method: 'get_account_session',
+          method: 'balance_of',
           args: {
             token_id: TokenContract,
             account_id: signedAccountId
@@ -86,9 +85,11 @@ export const ContractProvider: FC<ContractProviderProps> = ({ children }) => {
         })
       ])
 
-      console.log(tokenBalance)
-
-      setSession(session)
+      setConversation({
+        balance: conversation,
+        decimals: tokenMetadata.decimals,
+        formatted: (+formatUnits(conversation, tokenMetadata.decimals)).toLocaleString('en-Us')
+      })
       setToken({
         balance: tokenBalance,
         decimals: tokenMetadata.decimals,
@@ -133,32 +134,38 @@ export const ContractProvider: FC<ContractProviderProps> = ({ children }) => {
     }
   }
 
-  const take = async (amount = '1', cb?: (err?: unknown) => void) => {
+  const converse = async (amount = '1', cb?: (err?: unknown) => void) => {
     try {
-      setLoading(prev => ({ ...prev, session: true }))
+      setLoading(prev => ({ ...prev, conversation: true }))
 
       if (!wallet || !signedAccountId) {
         throw 'WALLET_NOT_CONNECTED'
       }
 
-      if (Number(session) < Number(amount)) {
-        throw 'INSUFFICIENT_SESSION'
+      const conversationAmount = parseUnits(amount, conversation.decimals)
+
+      if (Number(conversation.balance) < Number(conversationAmount)) {
+        throw 'INSUFFICIENT_CONVERSATION'
       }
 
       const account = await wallet.callMethod({
         contractId: BurnContract,
-        method: 'use_session',
-        args: { token_id: TokenContract, amount: amount.toString() }
+        method: 'converse',
+        args: { token_id: TokenContract, amount: conversationAmount }
       })
 
-      setSession(account.session)
+      setConversation(prev => ({
+        ...prev,
+        balance: account.amount,
+        formatted: (+formatUnits(account.amount, prev.decimals)).toLocaleString('en-Us')
+      }))
 
       cb && cb()
     } catch (err: any) {
       enqueueSnackbar(err?.message || err, { variant: 'error' })
       cb && cb(err)
     } finally {
-      setLoading(prev => ({ ...prev, session: false }))
+      setLoading(prev => ({ ...prev, conversation: false }))
     }
   }
 
@@ -186,7 +193,7 @@ export const ContractProvider: FC<ContractProviderProps> = ({ children }) => {
   }
 
   return (
-    <ContractContext.Provider value={{ loading, session, token, balance, buy, take, burn }}>
+    <ContractContext.Provider value={{ loading, conversation, token, balance, buy, converse, burn }}>
       {children}
     </ContractContext.Provider>
   )
