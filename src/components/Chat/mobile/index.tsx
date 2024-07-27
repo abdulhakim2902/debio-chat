@@ -13,7 +13,7 @@ export const MobileChat = () => {
     <Fragment>
       <Header model={model} token={token} session={session} />
       <Chat />
-      <FooterChat/>
+      <FooterChat />
     </Fragment>
   )
 }

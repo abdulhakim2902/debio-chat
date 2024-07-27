@@ -28,20 +28,20 @@ export const Chat: FC<ChatProps> = ({}) => {
   const { model, message, chats, loading, onChangeMessage, onChangeModel, onSendMessage } = useChat()
 
   return (
-      <Container
-        maxWidth={'md'}
-        sx={{ position: 'fixed', top: 80, left: 0, bottom: 130, overflowY: 'scroll', display: 'flex' }}
+    <Container
+      maxWidth={'md'}
+      sx={{ position: 'fixed', top: 80, left: 0, bottom: 130, overflowY: 'scroll', display: 'flex' }}
+    >
+      <div
+        style={{
+          position: 'relative',
+          width: '100%'
+        }}
       >
-        <div
-          style={{
-            position: 'relative',
-            width: '100%'
-          }}
-        >
-          {chats.map((c, i) => (
-            <ChatBox msg={c.msg} user={c.from === 'ME'}></ChatBox>
-          ))}
-        </div>
-      </Container>
+        {chats.map((c, i) => (
+          <ChatBox key={i} msg={c.msg} user={c.from === 'ME'}></ChatBox>
+        ))}
+      </div>
+    </Container>
   )
 }
