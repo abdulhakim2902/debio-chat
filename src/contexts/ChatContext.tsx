@@ -38,7 +38,7 @@ type ChatType = {
 }
 
 export const ChatProvider: FC<ChatProviderProps> = ({ children }) => {
-  const { session, take } = useContract()
+  const { conversation, converse } = useContract()
 
   const [message, setMessage] = useState('')
   const [model, setModel] = useState('Llama3')
@@ -69,7 +69,7 @@ export const ChatProvider: FC<ChatProviderProps> = ({ children }) => {
     setIsChatting(true)
     setChats(prev => [...prev, loadingRespons])
 
-    if (session <= 0) {
+    if (conversation.balance <= 0) {
       const time = new Date().toLocaleTimeString().slice(0, 5)
       const forbidden = "You don't have session"
       const response = { from: 'AI', msg: forbidden, time }
@@ -89,7 +89,7 @@ export const ChatProvider: FC<ChatProviderProps> = ({ children }) => {
       const time = new Date().toLocaleTimeString().slice(0, 5)
       const response = { from: 'AI', msg: answer.data.response, time }
 
-      take('1', err => {
+      converse('1', err => {
         if (err) {
           setChats(prev => [...prev.slice(0, prev.length - 1)])
           return
@@ -111,7 +111,7 @@ export const ChatProvider: FC<ChatProviderProps> = ({ children }) => {
     setIsChatting(true)
     setChats(prev => [...prev, loadingRespons])
 
-    if (session <= 0) {
+    if (conversation.balance <= 0) {
       const time = new Date().toLocaleTimeString().slice(0, 5)
       const forbidden = "You don't have session"
       const response = { from: 'AI', msg: forbidden, time }
@@ -129,7 +129,7 @@ export const ChatProvider: FC<ChatProviderProps> = ({ children }) => {
       const time = new Date().toLocaleTimeString().slice(0, 5)
       const response = { from: 'AI', msg: answer.data.response, time }
 
-      take('1', err => {
+      converse('1', err => {
         if (err) {
           setChats(prev => [...prev.slice(0, prev.length - 1)])
           setIsChatting(false)

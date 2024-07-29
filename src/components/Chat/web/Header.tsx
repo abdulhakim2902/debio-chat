@@ -18,7 +18,7 @@ import { FormEvent, Fragment, useEffect, useState } from 'react'
 export const Header = () => {
   const { wallet, signedAccountId } = useNearWallet()
 
-  const { loading, token, session, burn, buy } = useContract()
+  const { loading, token, conversation, burn, buy } = useContract()
 
   const [openBurnModal, setOpenBurnModal] = useState(false)
   const [openBuyModal, setOpenBuyModal] = useState(false)
@@ -77,7 +77,10 @@ export const Header = () => {
               <Typography>
                 Total Balance: {loading.balance ? <CircularProgress size={15} /> : token.formatted}
               </Typography>
-              <Typography>Total Session: {loading.balance ? <CircularProgress size={15} /> : session}</Typography>
+              <Typography>
+                Total Session:{' '}
+                {loading.conversation || loading.balance ? <CircularProgress size={15} /> : conversation.formatted}
+              </Typography>
             </Box>
           </Box>
         )}

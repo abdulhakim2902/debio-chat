@@ -16,40 +16,45 @@ import {
 } from '@mui/material'
 
 export const FooterChat = () => {
-    const { model, message, onChangeMessage, onChangeModel, onSendMessage } = useChat()
-    const { loading, token, session, burn, buy } = useContract()
-    const [openBurnModal, setOpenBurnModal] = useState(false)
-    const [openBuyModal, setOpenBuyModal] = useState(false)
-    const [burnAmount, setBurnAmount] = useState('')
-    const [buyAmount, setBuyAmount] = useState('')
+  const { model, message, onChangeMessage, onChangeModel, onSendMessage } = useChat()
+  const { loading, token, conversation, burn, buy } = useContract()
+  const [openBurnModal, setOpenBurnModal] = useState(false)
+  const [openBuyModal, setOpenBuyModal] = useState(false)
+  const [burnAmount, setBurnAmount] = useState('')
+  const [buyAmount, setBuyAmount] = useState('')
 
-    const handleCloseBurnModal = () => {
-        setOpenBurnModal(false)
-        setBurnAmount('')
-      }
-    
-    const handleCloseBuyModal = () => {
-        setOpenBuyModal(false)
-        setBuyAmount('')
-      }
+  const handleCloseBurnModal = () => {
+    setOpenBurnModal(false)
+    setBurnAmount('')
+  }
 
-    const handleBuyClick = () => {
-        setOpenBuyModal(true)
-    }
+  const handleCloseBuyModal = () => {
+    setOpenBuyModal(false)
+    setBuyAmount('')
+  }
 
-    const handleBurnClick = () => {
-        setOpenBurnModal(true)
-    }
-  
-    return (
-      <Fragment>
-        <div>
-            <Chip label="Burn $DBIO" onClick={handleBurnClick} color="primary" sx={{position:'fixed', bottom: 86, left:13}}></Chip>
-        </div>
-        <div>
-            <Chip label="Buy $DBIO" onClick={handleBuyClick} sx={{position:'fixed', bottom: 86, right:13}}></Chip>
-        </div>
-        <TextField
+  const handleBuyClick = () => {
+    setOpenBuyModal(true)
+  }
+
+  const handleBurnClick = () => {
+    setOpenBurnModal(true)
+  }
+
+  return (
+    <Fragment>
+      <div>
+        <Chip
+          label='Burn $DBIO'
+          onClick={handleBurnClick}
+          color='primary'
+          sx={{ position: 'fixed', bottom: 86, left: 13 }}
+        ></Chip>
+      </div>
+      <div>
+        <Chip label='Buy $DBIO' onClick={handleBuyClick} sx={{ position: 'fixed', bottom: 86, right: 13 }}></Chip>
+      </div>
+      <TextField
         id='outlined-basic-email'
         InputProps={{
           disableUnderline: true
@@ -159,6 +164,6 @@ export const FooterChat = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      </Fragment>
-    )
-  }
+    </Fragment>
+  )
+}

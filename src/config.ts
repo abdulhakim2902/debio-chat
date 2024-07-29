@@ -1,6 +1,6 @@
 const burnContractPerNetwork = {
   mainnet: '',
-  testnet: 'dbio-burn3.testnet'
+  testnet: 'dbio-burn5.testnet'
 }
 
 const tokenContractPerNetwork = {
