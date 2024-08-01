@@ -1,5 +1,5 @@
 import { FC, ReactNode } from 'react'
-import { Box, Chip, Container } from '@mui/material'
+import { Chip, Container } from '@mui/material'
 
 export type ChatboxProps = {
   user: boolean

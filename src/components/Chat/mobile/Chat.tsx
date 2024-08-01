@@ -1,36 +1,18 @@
 import { useChat } from '@/src/contexts/ChatContext'
-import { FC, Fragment } from 'react'
-import { IoMdSend } from 'react-icons/io'
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Divider,
-  Grid,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  TextField,
-  Typography,
-  Fab,
-  Chip,
-  Stack,
-  Container,
-  SxProps
-} from '@mui/material'
+import { FC } from 'react'
+import { Container } from '@mui/material'
 
 import { ChatBox } from './Chatbox'
 
 export type ChatProps = {}
 
 export const Chat: FC<ChatProps> = ({}) => {
-  const { model, message, chats, loading, onChangeMessage, onChangeModel, onSendMessage } = useChat()
+  const { chats } = useChat()
 
   return (
     <Container
       maxWidth={'md'}
-      sx={{ position: 'fixed', top: 80, left: 0, bottom: 130, overflowY: 'scroll', display: 'flex' }}
+      sx={{ position: 'fixed', top: 225, left: 0, bottom: 130, overflowY: 'scroll', display: 'flex' }}
     >
       <div
         style={{
