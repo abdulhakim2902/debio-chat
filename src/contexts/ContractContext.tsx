@@ -121,12 +121,26 @@ export const ContractProvider: FC<ContractProviderProps> = ({ children }) => {
         throw 'INSUFFICIENT_BALANCE'
       }
 
-      await wallet.callMethod({
-        contractId: BurnContract,
-        method: 'burn',
-        args: { token_id: TokenContract, amount: tokenAmount.toString() },
-        deposit: '1'
-      })
+      await wallet.callMethods([
+        {
+          contractId: TokenContract,
+          method: 'storage_deposit',
+          args: { account_id: BurnContract },
+          deposit: parseNearAmount('0.00125') || '0',
+        },
+        {
+          contractId: TokenContract,
+          method: 'ft_transfer_call',
+          args: { receiver_id: BurnContract, amount: tokenAmount, msg: '' },
+          deposit: '1',
+        },
+        {
+          contractId: BurnContract,
+          method: 'burn',
+          args: { token_id: TokenContract },
+          deposit: '1',
+        }
+      ])
     } catch (err: any) {
       enqueueSnackbar(err?.message || err, { variant: 'error' })
     } finally {

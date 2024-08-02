@@ -5,7 +5,7 @@ const burnContractPerNetwork = {
 
 const tokenContractPerNetwork = {
   mainnet: '',
-  testnet: 'debio-token4.testnet'
+  testnet: 'debio-token5.testnet'
 }
 
 export const NetworkId = 'testnet'
