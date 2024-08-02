@@ -7,7 +7,7 @@ import { useChat } from '@/src/contexts/ChatContext'
 
 type HeaderProps = {
   token: Token
-  conversation: number
+  conversation: string
 }
 
 export const Header: FC<HeaderProps> = ({ token, conversation }) => {
