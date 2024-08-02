@@ -9,7 +9,7 @@ export const MobileChat = () => {
 
   return (
     <Fragment>
-      <Header token={token} conversation={conversation.balance} />
+      <Header token={token} conversation={conversation.formatted} />
       <Chat />
       <FooterChat />
     </Fragment>
