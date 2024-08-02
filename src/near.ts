@@ -10,7 +10,7 @@ import { setupModal } from '@near-wallet-selector/modal-ui'
 import { NetworkId, setupWalletSelector, WalletSelector } from '@near-wallet-selector/core'
 import { setupMyNearWallet } from '@near-wallet-selector/my-near-wallet'
 
-const THIRTY_TGAS = '30000000000000'
+const THIRTY_TGAS = '300000000000000'
 const NO_DEPOSIT = '0'
 
 type WalletParams = {
@@ -151,6 +151,32 @@ export class Wallet {
 
     if (!outcome) return
     return providers.getTransactionLastResult(outcome)
+  }
+
+  callMethods = async <T extends Object>(params: ContractParams<T>[]) => {
+    // Sign a transaction with the "FunctionCall" action
+    const selectedWallet = await (await this.selector).wallet()
+    
+    await selectedWallet.signAndSendTransactions({
+      transactions: params.map(param => {
+        const { contractId, method, args = {}, gas = THIRTY_TGAS, deposit = NO_DEPOSIT } = param
+  
+        return {
+          receiverId: contractId,
+          actions: [
+            {
+              type: 'FunctionCall',
+              params: {
+                methodName: method,
+                args,
+                gas,
+                deposit
+              }
+            }
+          ]
+        }
+      })
+    })
   }
 
   /**
