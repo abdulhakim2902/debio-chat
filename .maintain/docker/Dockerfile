@@ -17,8 +17,7 @@ ARG VCS_REF
 LABEL network.debio.image.authors="dev@debio.network"
 RUN useradd -m -u 1001 -U -s /bin/sh -d /home/debio debio
 WORKDIR /app
-COPY --from=builder /app/next.config.js ./next.config.js
-COPY --from=builder /app/plugins ./plugins
+COPY --from=builder /app/next.config.mjs ./next.config.mjs
 COPY --from=builder --chown=debio /app/public ./public
 COPY --from=builder --chown=debio /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
