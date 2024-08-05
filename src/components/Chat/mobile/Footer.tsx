@@ -1,6 +1,7 @@
 import { useChat } from '@/src/contexts/ChatContext'
 import { useContract } from '@/src/contexts/ContractContext'
 import { Fragment, useState, FormEvent } from 'react'
+import { FC } from 'react'
 import { IoMdSend } from 'react-icons/io'
 import {
   TextField,
@@ -12,10 +13,15 @@ import {
   DialogContentText,
   DialogTitle,
   InputAdornment,
-  Button
+  Button,
+  Typography
 } from '@mui/material'
 
-export const FooterChat = () => {
+type FooterProps = {
+  sessions: string
+}
+
+export const FooterChat: FC<FooterProps> = ({ sessions }) => {
   const { model, message, onChangeMessage, onChangeModel, onSendMessage } = useChat()
   const { loading, token, conversation, burn, buy } = useContract()
   const [openBurnModal, setOpenBurnModal] = useState(false)
@@ -45,14 +51,21 @@ export const FooterChat = () => {
     <Fragment>
       <div>
         <Chip
-          label='Burn $DBIO'
+          label='Burn 5 $DBIO : get 5 sessions'
           onClick={handleBurnClick}
-          color='primary'
-          sx={{ position: 'fixed', bottom: 86, left: 13 }}
+          color='secondary'
+          sx={{
+            position: 'fixed',
+            bottom: 101,
+            left: 91,
+            '& .MuiChip-label': {
+              color: '#FF56E0'
+            }
+          }}
         ></Chip>
-      </div>
-      <div>
-        <Chip label='Buy $DBIO' onClick={handleBuyClick} sx={{ position: 'fixed', bottom: 86, right: 13 }}></Chip>
+        <Typography color={'#FEFEFE'} sx={{ position: 'fixed', bottom: 76, left: 113, fontFamily: 'Open Sans' }}>
+          Remaining Sessions: {sessions}
+        </Typography>
       </div>
       <TextField
         id='outlined-basic-email'
@@ -61,8 +74,9 @@ export const FooterChat = () => {
         }}
         onChange={event => onChangeMessage(event.target.value)}
         value={message}
-        label='Type Something'
-        sx={{ position: 'fixed', left: 13, bottom: 21, right: 70 }}
+        label='Message DeBioBot'
+        variant='filled'
+        sx={{ position: 'fixed', left: 13, bottom: 21, right: 70, backgroundColor: 'white' }}
       />
       <div style={{ position: 'fixed', right: 6, bottom: 21 }}>
         <Fab

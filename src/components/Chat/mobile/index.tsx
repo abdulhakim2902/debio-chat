@@ -11,7 +11,7 @@ export const MobileChat = () => {
     <Fragment>
       <Header token={token} conversation={conversation.formatted} />
       <Chat />
-      <FooterChat />
+      <FooterChat sessions={conversation.formatted} />
     </Fragment>
   )
 }

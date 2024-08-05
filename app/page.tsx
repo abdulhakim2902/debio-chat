@@ -11,6 +11,7 @@ import { Wallet } from "@/src/near";
 import { ContractProvider } from "@/src/contexts/ContractContext";
 import { Chat } from '@/src/components/Chat';
 import { SnackbarProvider } from 'notistack';
+import { CssBaseline } from '@mui/material';
 
 const wallet = new Wallet({
   createAccessKeyFor: BurnContract,
@@ -18,10 +19,16 @@ const wallet = new Wallet({
   methodNames: ['converse']
 })
 
-const themes = createTheme({
+let themes = createTheme({
   palette: {
     primary: {
       main : '#FF56E0'
+    },
+    secondary: {
+      main : '#FEFEFE'
+    },
+    background: {
+      default: '#363636'
     },
   },
 });
@@ -42,6 +49,7 @@ export default function Home() {
         <NearContext.Provider value={{ wallet, signedAccountId }}>
           <ContractProvider>
             <ThemeProvider theme={themes}>
+              <CssBaseline/>
               <Chat isMobile={isMobile}/>
             </ThemeProvider>
           </ContractProvider>

@@ -126,19 +126,19 @@ export const ContractProvider: FC<ContractProviderProps> = ({ children }) => {
           contractId: TokenContract,
           method: 'storage_deposit',
           args: { account_id: BurnContract },
-          deposit: parseNearAmount('0.00125') || '0',
+          deposit: parseNearAmount('0.00125') || '0'
         },
         {
           contractId: TokenContract,
           method: 'ft_transfer_call',
           args: { receiver_id: BurnContract, amount: tokenAmount, msg: '' },
-          deposit: '1',
+          deposit: '1'
         },
         {
           contractId: BurnContract,
           method: 'burn',
           args: { token_id: TokenContract },
-          deposit: '1',
+          deposit: '1'
         }
       ])
     } catch (err: any) {

@@ -156,11 +156,11 @@ export class Wallet {
   callMethods = async <T extends Object>(params: ContractParams<T>[]) => {
     // Sign a transaction with the "FunctionCall" action
     const selectedWallet = await (await this.selector).wallet()
-    
+
     await selectedWallet.signAndSendTransactions({
       transactions: params.map(param => {
         const { contractId, method, args = {}, gas = THIRTY_TGAS, deposit = NO_DEPOSIT } = param
-  
+
         return {
           receiverId: contractId,
           actions: [
