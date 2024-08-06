@@ -59,6 +59,7 @@ export const FooterChat: FC<FooterProps> = ({ sessions }) => {
             bottom: 101,
             left: 91,
             '& .MuiChip-label': {
+              fontFamily: 'Open Sans',
               color: '#FF56E0'
             }
           }}
@@ -70,13 +71,13 @@ export const FooterChat: FC<FooterProps> = ({ sessions }) => {
       <TextField
         id='outlined-basic-email'
         InputProps={{
-          disableUnderline: true
+          sx: { borderRadius: 50 }
         }}
         onChange={event => onChangeMessage(event.target.value)}
         value={message}
         label='Message DeBioBot'
         variant='filled'
-        sx={{ position: 'fixed', left: 13, bottom: 21, right: 70, backgroundColor: 'white' }}
+        sx={{ position: 'fixed', left: 13, bottom: 21, right: 70, backgroundColor: 'white', borderRadius: 20 }}
       />
       <div style={{ position: 'fixed', right: 6, bottom: 21 }}>
         <Fab

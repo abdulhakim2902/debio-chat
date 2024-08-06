@@ -31,7 +31,8 @@ export const ChatBox: FC<ChatboxProps> = ({ user, msg }) => {
               '& .MuiChip-label': {
                 display: 'block',
                 whiteSpace: 'normal',
-                fontSize: 14
+                fontSize: 14,
+                fontFamily: 'Open Sans'
               }
             }}
           ></Chip>
@@ -68,7 +69,8 @@ export const ChatBox: FC<ChatboxProps> = ({ user, msg }) => {
               '& .MuiChip-label': {
                 display: 'block',
                 whiteSpace: 'normal',
-                fontSize: 14
+                fontSize: 14,
+                fontFamily: 'Open Sans'
               }
             }}
           ></Chip>

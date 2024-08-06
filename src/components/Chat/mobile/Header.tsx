@@ -62,6 +62,7 @@ export const Header: FC<HeaderProps> = ({ token, conversation }) => {
             fontSize: 10,
             fontFamily: 'Open Sans',
             '& .MuiChip-label': {
+              fontFamily: 'Open Sans',
               color: '#FF56E0'
             }
           }}
@@ -98,10 +99,14 @@ export const Header: FC<HeaderProps> = ({ token, conversation }) => {
           <CardContent>
             {!disclaimer && (
               <>
-                <Typography sx={{ position: 'absolute', right: 3, fontSize: 14 }} color='primary' onClick={handleMore}>
+                <Typography
+                  sx={{ position: 'absolute', right: 3, fontSize: 14, fontFamily: 'Open Sans' }}
+                  color='primary'
+                  onClick={handleMore}
+                >
                   Show Full Disclaimer
                 </Typography>
-                <Typography sx={{ position: 'relative', right: 10, fontSize: 14 }}>
+                <Typography sx={{ position: 'relative', right: 10, fontSize: 14, fontFamily: 'Open Sans' }}>
                   For research and information only
                 </Typography>
               </>
@@ -109,13 +114,15 @@ export const Header: FC<HeaderProps> = ({ token, conversation }) => {
             {disclaimer && (
               <>
                 <Typography
-                  sx={{ position: 'absolute', top: -3, right: 3, fontSize: 14 }}
+                  sx={{ position: 'absolute', top: -3, right: 3, fontSize: 14, fontFamily: 'Open Sans' }}
                   color='primary'
                   onClick={handleLess}
                 >
                   Hide
                 </Typography>
-                <Typography sx={{ position: 'relative', top: 12, fontSize: 14 }}>{disclaimerString}</Typography>
+                <Typography sx={{ position: 'relative', top: 12, fontSize: 14, fontFamily: 'Open Sans' }}>
+                  {disclaimerString}
+                </Typography>
               </>
             )}
           </CardContent>
