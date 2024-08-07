@@ -3,8 +3,8 @@ import { Avatar, Card, CardContent, Chip, Container, IconButton, Menu, MenuItem,
 import { FC } from 'react'
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown'
 import { useState } from 'react'
-import DebioIcon from '../../../../public/debio-logo.svg'
 import { useChat } from '@/src/contexts/ChatContext'
+import { useNearWallet } from '@/src/contexts/NearContext'
 
 type HeaderProps = {
   token: Token
@@ -13,6 +13,7 @@ type HeaderProps = {
 
 export const Header: FC<HeaderProps> = ({ token, conversation }) => {
   const { model, onChangeModel } = useChat()
+  const { wallet, signedAccountId } = useNearWallet()
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
@@ -21,6 +22,17 @@ export const Header: FC<HeaderProps> = ({ token, conversation }) => {
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(anchorEl ? null : event.currentTarget)
   }
+
+  const action = () => {
+    if (!wallet) return
+
+    if (signedAccountId) {
+      return wallet.signOut()
+    }
+
+    return wallet.signIn()
+  }
+
   const handleChange = () => {
     onChangeModel()
     setAnchorEl(null)
@@ -40,33 +52,73 @@ export const Header: FC<HeaderProps> = ({ token, conversation }) => {
 
   const disclaimerString: string =
     'Provision of Service: DeBio services are for research, information, and education only. DeBio does not provide medical or diagnostic advice. Consult your doctor or healthcare provider for any medical concerns. In case of emergency, call emergency services or go to the nearest emergency room.'
-
   return (
     <>
       <Container sx={{ bgcolor: '#551149', height: 60, position: 'absolute', top: 0, left: 0 }} maxWidth={'md'}>
-        <Typography
-          color={'#FFFFFF'}
-          sx={{ position: 'absolute', top: 13, right: 17, fontSize: 10, fontFamily: 'Roboto' }}
-        >
-          {' '}
-          <b>Balance</b>: $DBIO {token.formatted}{' '}
-        </Typography>
-        <Chip
-          label='Buy $DBIO on Ref.Finance'
-          color='secondary'
-          size='small'
-          sx={{
-            position: 'absolute',
-            top: 30,
-            right: 17,
-            fontSize: 10,
-            fontFamily: 'Roboto',
-            '& .MuiChip-label': {
-              fontFamily: 'Roboto',
-              color: '#FF56E0'
-            }
-          }}
-        ></Chip>
+        {signedAccountId && (
+          <>
+            <Typography
+              color={'#FFFFFF'}
+              sx={{ position: 'absolute', top: 13, right: 17, fontSize: 10, fontFamily: 'Roboto' }}
+            >
+              {' '}
+              <b>Balance</b>: $DBIO {token.formatted}{' '}
+            </Typography>
+            <Chip
+              label='Buy $DBIO on Ref.Finance'
+              color='secondary'
+              size='small'
+              sx={{
+                position: 'absolute',
+                top: 30,
+                right: 17,
+                fontSize: 10,
+                fontFamily: 'Roboto',
+                '& .MuiChip-label': {
+                  fontFamily: 'Roboto',
+                  color: '#FF56E0'
+                }
+              }}
+            ></Chip>
+            <Chip
+              label='Logout'
+              color='error'
+              size='medium'
+              onClick={action}
+              sx={{
+                position: 'absolute',
+                top: 22,
+                left: 120,
+                fontSize: 10,
+                fontFamily: 'Roboto',
+                '& .MuiChip-label': {
+                  fontFamily: 'Roboto'
+                }
+              }}
+            ></Chip>
+          </>
+        )}
+        {!signedAccountId && (
+          <>
+            <Chip
+              label='Login'
+              color='secondary'
+              size='medium'
+              onClick={action}
+              sx={{
+                position: 'absolute',
+                top: 20,
+                right: 17,
+                fontSize: 10,
+                fontFamily: 'Roboto',
+                '& .MuiChip-label': {
+                  fontFamily: 'Roboto',
+                  color: '#FF56E0'
+                }
+              }}
+            ></Chip>
+          </>
+        )}
         <Avatar
           alt='debio'
           src={

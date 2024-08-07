@@ -43,7 +43,9 @@ export const ChatProvider: FC<ChatProviderProps> = ({ children }) => {
   const [message, setMessage] = useState('')
   const [model, setModel] = useState('Llama3')
   const [isChatting, setIsChatting] = useState(false)
-  const [chats, setChats] = useState<ChatType[]>([{ from: 'AI', msg: 'Hello! I\'m Debbie, your personal genetic analyst.', time: '15:55' }])
+  const [chats, setChats] = useState<ChatType[]>([
+    { from: 'AI', msg: "Hello! I'm Debbie, your personal genetic analyst.", time: '15:55' }
+  ])
 
   const onChangeModel = () => {
     if (model === 'Llama3') {

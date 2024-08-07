@@ -3,6 +3,7 @@ import { useContract } from '@/src/contexts/ContractContext'
 import { Fragment, useState, FormEvent } from 'react'
 import { FC } from 'react'
 import { IoMdSend } from 'react-icons/io'
+import { useNearWallet } from '@/src/contexts/NearContext'
 import {
   TextField,
   Fab,
@@ -23,6 +24,7 @@ type FooterProps = {
 
 export const FooterChat: FC<FooterProps> = ({ sessions }) => {
   const { model, message, onChangeMessage, onChangeModel, onSendMessage } = useChat()
+  const { signedAccountId } = useNearWallet()
   const { loading, token, conversation, burn, buy } = useContract()
   const [openBurnModal, setOpenBurnModal] = useState(false)
   const [openBuyModal, setOpenBuyModal] = useState(false)
@@ -49,25 +51,27 @@ export const FooterChat: FC<FooterProps> = ({ sessions }) => {
 
   return (
     <Fragment>
-      <div>
-        <Chip
-          label='Burn 5 $DBIO : get 5 sessions'
-          onClick={handleBurnClick}
-          color='secondary'
-          sx={{
-            position: 'fixed',
-            bottom: 101,
-            left: 91,
-            '& .MuiChip-label': {
-              fontFamily: 'Roboto',
-              color: '#FF56E0'
-            }
-          }}
-        ></Chip>
-        <Typography color={'#FEFEFE'} sx={{ position: 'fixed', bottom: 76, left: 113, fontFamily: 'Roboto' }}>
-          Remaining Sessions: {sessions}
-        </Typography>
-      </div>
+      {signedAccountId && (
+        <div>
+          <Chip
+            label='Burn 5 $DBIO : get 5 sessions'
+            onClick={handleBurnClick}
+            color='secondary'
+            sx={{
+              position: 'fixed',
+              bottom: 101,
+              left: 91,
+              '& .MuiChip-label': {
+                fontFamily: 'Roboto',
+                color: '#FF56E0'
+              }
+            }}
+          ></Chip>
+          <Typography color={'#FEFEFE'} sx={{ position: 'fixed', bottom: 76, left: 113, fontFamily: 'Roboto' }}>
+            Remaining Sessions: {sessions}
+          </Typography>
+        </div>
+      )}
       <TextField
         id='outlined-basic-email'
         InputProps={{
