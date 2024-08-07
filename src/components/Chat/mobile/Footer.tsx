@@ -59,12 +59,12 @@ export const FooterChat: FC<FooterProps> = ({ sessions }) => {
             bottom: 101,
             left: 91,
             '& .MuiChip-label': {
-              fontFamily: 'Open Sans',
+              fontFamily: 'Roboto',
               color: '#FF56E0'
             }
           }}
         ></Chip>
-        <Typography color={'#FEFEFE'} sx={{ position: 'fixed', bottom: 76, left: 113, fontFamily: 'Open Sans' }}>
+        <Typography color={'#FEFEFE'} sx={{ position: 'fixed', bottom: 76, left: 113, fontFamily: 'Roboto' }}>
           Remaining Sessions: {sessions}
         </Typography>
       </div>
@@ -75,7 +75,7 @@ export const FooterChat: FC<FooterProps> = ({ sessions }) => {
         }}
         onChange={event => onChangeMessage(event.target.value)}
         value={message}
-        label='Message DeBioBot'
+        label='Message Debby'
         variant='filled'
         sx={{ position: 'fixed', left: 13, bottom: 21, right: 70, backgroundColor: 'white', borderRadius: 20 }}
       />

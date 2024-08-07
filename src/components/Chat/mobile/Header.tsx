@@ -46,7 +46,7 @@ export const Header: FC<HeaderProps> = ({ token, conversation }) => {
       <Container sx={{ bgcolor: '#551149', height: 60, position: 'absolute', top: 0, left: 0 }} maxWidth={'md'}>
         <Typography
           color={'#FFFFFF'}
-          sx={{ position: 'absolute', top: 13, right: 17, fontSize: 10, fontFamily: 'Open Sans' }}
+          sx={{ position: 'absolute', top: 13, right: 17, fontSize: 10, fontFamily: 'Roboto' }}
         >
           {' '}
           <b>Balance</b>: $DBIO {token.formatted}{' '}
@@ -60,9 +60,9 @@ export const Header: FC<HeaderProps> = ({ token, conversation }) => {
             top: 30,
             right: 17,
             fontSize: 10,
-            fontFamily: 'Open Sans',
+            fontFamily: 'Roboto',
             '& .MuiChip-label': {
-              fontFamily: 'Open Sans',
+              fontFamily: 'Roboto',
               color: '#FF56E0'
             }
           }}
@@ -100,13 +100,13 @@ export const Header: FC<HeaderProps> = ({ token, conversation }) => {
             {!disclaimer && (
               <>
                 <Typography
-                  sx={{ position: 'absolute', right: 3, fontSize: 14, fontFamily: 'Open Sans' }}
+                  sx={{ position: 'absolute', right: 3, fontSize: 14, fontFamily: 'Roboto' }}
                   color='primary'
                   onClick={handleMore}
                 >
                   Show Full Disclaimer
                 </Typography>
-                <Typography sx={{ position: 'relative', right: 10, fontSize: 14, fontFamily: 'Open Sans' }}>
+                <Typography sx={{ position: 'relative', right: 10, fontSize: 14, fontFamily: 'Roboto' }}>
                   For research and information only
                 </Typography>
               </>
@@ -114,13 +114,13 @@ export const Header: FC<HeaderProps> = ({ token, conversation }) => {
             {disclaimer && (
               <>
                 <Typography
-                  sx={{ position: 'absolute', top: -3, right: 3, fontSize: 14, fontFamily: 'Open Sans' }}
+                  sx={{ position: 'absolute', top: -3, right: 3, fontSize: 14, fontFamily: 'Roboto' }}
                   color='primary'
                   onClick={handleLess}
                 >
                   Hide
                 </Typography>
-                <Typography sx={{ position: 'relative', top: 12, fontSize: 14, fontFamily: 'Open Sans' }}>
+                <Typography sx={{ position: 'relative', top: 12, fontSize: 14, fontFamily: 'Roboto' }}>
                   {disclaimerString}
                 </Typography>
               </>

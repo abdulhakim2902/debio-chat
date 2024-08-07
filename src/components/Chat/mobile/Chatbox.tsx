@@ -32,7 +32,7 @@ export const ChatBox: FC<ChatboxProps> = ({ user, msg }) => {
                 display: 'block',
                 whiteSpace: 'normal',
                 fontSize: 14,
-                fontFamily: 'Open Sans'
+                fontFamily: 'Roboto'
               }
             }}
           ></Chip>
@@ -70,7 +70,7 @@ export const ChatBox: FC<ChatboxProps> = ({ user, msg }) => {
                 display: 'block',
                 whiteSpace: 'normal',
                 fontSize: 14,
-                fontFamily: 'Open Sans'
+                fontFamily: 'Roboto'
               }
             }}
           ></Chip>
