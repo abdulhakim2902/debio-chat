@@ -12,7 +12,7 @@ export const Chat: FC<ChatProps> = ({}) => {
   return (
     <Container
       maxWidth={'md'}
-      sx={{ position: 'fixed', top: 225, left: 0, bottom: 130, overflowY: 'scroll', display: 'flex' }}
+      sx={{ position: 'fixed', top: 225, left: 0, bottom: 140, overflowY: 'scroll', display: 'flex' }}
     >
       <div
         style={{
