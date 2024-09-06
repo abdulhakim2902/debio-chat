@@ -3,7 +3,10 @@ import axios from 'axios'
 import { createContext, FC, ReactNode, useContext, useState } from 'react'
 import { useContract } from './ContractContext'
 import { enqueueSnackbar } from 'notistack'
-import { Box, Button, CircularProgress, Link, Typography } from '@mui/material'
+import { Box, Button, CircularProgress, LinearProgress, Typography } from '@mui/material'
+import { OnUploadData, useAsset } from './AssetContext'
+
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined'
 
 export type ChatContextValue = {
   loading: boolean
@@ -14,7 +17,7 @@ export type ChatContextValue = {
   onChangeMessage: (value: string) => void
   onChangeModel: (model?: string) => void
   onSendMessage: (from: string, msg: string) => void
-  onUploadMessage: (link: string) => void
+  onUploadMessage: (data: OnUploadData) => void
 }
 
 export const ChatContext = createContext<ChatContextValue>({
@@ -41,6 +44,7 @@ type ChatType = {
 
 export const ChatProvider: FC<ChatProviderProps> = ({ children }) => {
   const { conversation, converse } = useContract()
+  const { file, uploadFile } = useAsset()
 
   const [message, setMessage] = useState('')
   const [model, setModel] = useState('Llama3')
@@ -162,22 +166,63 @@ export const ChatProvider: FC<ChatProviderProps> = ({ children }) => {
     addResponse(msg)
   }
 
-  const addUploadResponse = async (link: string) => {
-    const time = new Date().toLocaleTimeString().slice(0, 5)
-    const response = {
-      from: 'AI',
-      msg: (
-        <Box display='flex' justifyContent='space-between' alignContent='center' alignItems='center'>
-          You have uploaded a file
-          <Button variant='contained' href={link} target='_blank' color='success'>
-            Open
-          </Button>
-        </Box>
-      ),
-      time
-    }
+  const addUploadResponse = async (data: OnUploadData) => {
+    const { isLoading, progress, file, link, init } = data
 
-    setChats(prev => [...prev, response])
+    setChats(prev => {
+      const time = new Date().toLocaleTimeString().slice(0, 5)
+      const response = {
+        from: 'ME',
+        msg: (
+          <Box
+            display='flex'
+            justifyContent='space-between'
+            alignContent='center'
+            alignItems='center'
+            padding={1}
+            borderRadius={2}
+            boxShadow={2}
+          >
+            <Box padding={1}>
+              <DescriptionOutlinedIcon fontSize='large' />
+              <Typography fontSize={12}>{file.name}</Typography>
+            </Box>
+            {isLoading && progress <= 100 && (
+              <Box marginX={2} sx={{ width: '100%' }}>
+                <LinearProgress variant='determinate' sx={{ height: 10, borderRadius: 5 }} value={progress} />
+              </Box>
+            )}
+            {!isLoading && link && progress >= 100 && (
+              <Box paddingRight={2} sx={{ width: '100%' }} display='flex' justifyContent='flex-end'>
+                <Button variant='contained' href={link} target='_blank' color='success'>
+                  Open
+                </Button>
+              </Box>
+            )}
+            {init && (
+              <Box paddingRight={2} sx={{ width: '100%' }} display='flex' justifyContent='flex-end'>
+                <Button
+                  variant='contained'
+                  onClick={() => file && uploadFile(file, data => addUploadResponse(data))}
+                  color='success'
+                >
+                  Upload
+                </Button>
+              </Box>
+            )}
+          </Box>
+        ),
+        time
+      }
+
+      if (init) {
+        return [...prev, response]
+      }
+
+      prev[prev.length - 1] = response
+
+      return [...prev]
+    })
   }
 
   return (

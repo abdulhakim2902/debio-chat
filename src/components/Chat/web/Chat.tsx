@@ -17,7 +17,7 @@ import { useChat } from '@/src/contexts/ChatContext'
 
 import SendIcon from '@mui/icons-material/Send'
 import { useNearWallet } from '@/src/contexts/NearContext'
-import { Fragment, useState } from 'react'
+import { useState } from 'react'
 import { useAsset } from '@/src/contexts/AssetContext'
 
 export const Chat = () => {
@@ -54,19 +54,9 @@ export const Chat = () => {
               color='success'
               sx={{ width: '120px' }}
               disableRipple={isUploaded || isUploading}
-              onClick={file ? () => uploadFile(file, link => onUploadMessage(link)) : addFile}
+              onClick={() => addFile(data => onUploadMessage(data))}
             >
-              {isUploaded ? (
-                'Uploaded'
-              ) : file ? (
-                isUploading ? (
-                  <CircularProgress size={15} color='inherit' />
-                ) : (
-                  'Upload'
-                )
-              ) : (
-                'Add File'
-              )}
+              Add File
             </Button>
 
             <Box width={90}>

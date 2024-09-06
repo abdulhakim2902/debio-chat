@@ -7,18 +7,24 @@ import { Ed25519KeyIdentity } from '@dfinity/identity'
 import { enqueueSnackbar } from 'notistack'
 import { v4 as uuidv4 } from 'uuid'
 
+export type OnUploadData = {
+  isLoading: boolean
+  init: boolean
+  file: File
+  progress: number
+  link?: string
+}
+
 export type AssetContextValue = {
   file?: File
-  progress: number
   isUploading: boolean
   isUploaded: boolean
 
-  addFile: () => void
-  uploadFile: (file: File, cb?: (link: string) => void) => void
+  addFile: (cb?: (data: OnUploadData) => void) => void
+  uploadFile: (file: File, cb?: (data: OnUploadData) => void) => void
 }
 
 export const AssetContext = createContext<AssetContextValue>({
-  progress: 0,
   isUploaded: false,
   isUploading: false,
   addFile: () => {},
@@ -33,7 +39,6 @@ const identity = Ed25519KeyIdentity.fromSecretKey(Buffer.from(AppConfig.STORAGE_
 
 export const AssetProvider: FC<AssetProviderProps> = ({ children }) => {
   const [file, setFile] = useState<File>()
-  const [progress, setProgress] = useState<number>(0)
   const [isUploaded, setIsUploaded] = useState<boolean>(false)
   const [isUploading, setIsUploading] = useState<boolean>(false)
   const [assetManager, setAssetManager] = useState<AssetManager>()
@@ -53,7 +58,7 @@ export const AssetProvider: FC<AssetProviderProps> = ({ children }) => {
     }
   }, [signedAccountId])
 
-  const addFile = async () => {
+  const addFile = async (cb?: (data: OnUploadData) => void) => {
     if (isUploaded || isUploading) return
 
     const input = document.createElement('input')
@@ -77,17 +82,34 @@ export const AssetProvider: FC<AssetProviderProps> = ({ children }) => {
         }
 
         setFile(input.files[0])
+
+        const data = {
+          isLoading: false,
+          init: true,
+          file: input.files[0],
+          progress: 0
+        } as OnUploadData
+
+        cb && cb(data)
       }
     }
   }
 
-  const uploadFile = async (file: File, cb?: (link: string) => void) => {
+  const uploadFile = async (file: File, cb?: (data: OnUploadData) => void) => {
     if (!assetManager) return
     if (isUploaded || isUploading) return
 
+    const data = {
+      isLoading: true,
+      init: false,
+      file: file,
+      progress: 0
+    } as OnUploadData
+
     try {
-      setProgress(0)
       setIsUploading(true)
+
+      cb && cb(data)
 
       const batch = assetManager.batch()
 
@@ -97,15 +119,23 @@ export const AssetProvider: FC<AssetProviderProps> = ({ children }) => {
       })
 
       await batch.commit({
-        onProgress: ({ current, total }) => setProgress((current / total) * 100)
+        onProgress: ({ current, total }) => {
+          data.progress = (current / total) * 100
+
+          cb && cb(data)
+        }
       })
 
       setIsUploaded(true)
 
       setTimeout(() => setIsUploaded(false), 3000)
 
-      cb && cb(`https://${AppConfig.STORAGE_CANISTER_ID}.${AppConfig.STORAGE_HOST}${key}`)
+      data.isLoading = false
+      data.link = `https://${AppConfig.STORAGE_CANISTER_ID}.${AppConfig.STORAGE_HOST}${key}`
+
+      cb && cb(data)
     } catch (err: any) {
+      cb && cb({ ...data, isLoading: false })
       enqueueSnackbar(err.message, {
         variant: 'error'
       })
@@ -116,7 +146,7 @@ export const AssetProvider: FC<AssetProviderProps> = ({ children }) => {
   }
 
   return (
-    <AssetContext.Provider value={{ isUploading, progress, addFile, uploadFile, file, isUploaded }}>
+    <AssetContext.Provider value={{ isUploading, addFile, uploadFile, file, isUploaded }}>
       {children}
     </AssetContext.Provider>
   )
