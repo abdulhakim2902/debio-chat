@@ -3,7 +3,7 @@ import axios from 'axios'
 import { createContext, FC, ReactNode, useContext, useState } from 'react'
 import { useContract } from './ContractContext'
 import { enqueueSnackbar } from 'notistack'
-import { CircularProgress } from '@mui/material'
+import { Box, Button, CircularProgress, Link, Typography } from '@mui/material'
 
 export type ChatContextValue = {
   loading: boolean
@@ -12,8 +12,9 @@ export type ChatContextValue = {
   chats: ChatType[]
 
   onChangeMessage: (value: string) => void
-  onChangeModel: () => void
+  onChangeModel: (model?: string) => void
   onSendMessage: (from: string, msg: string) => void
+  onUploadMessage: (link: string) => void
 }
 
 export const ChatContext = createContext<ChatContextValue>({
@@ -24,7 +25,8 @@ export const ChatContext = createContext<ChatContextValue>({
 
   onChangeMessage: () => {},
   onChangeModel: () => {},
-  onSendMessage: () => {}
+  onSendMessage: () => {},
+  onUploadMessage: () => {}
 })
 
 type ChatProviderProps = {
@@ -47,11 +49,15 @@ export const ChatProvider: FC<ChatProviderProps> = ({ children }) => {
     { from: 'AI', msg: "Hello! I'm Debbie, your personal genetic analyst.", time: '15:55' }
   ])
 
-  const onChangeModel = () => {
-    if (model === 'Llama3') {
-      setModel('OpenAI')
+  const onChangeModel = (mod?: string) => {
+    if (mod) {
+      setModel(mod)
     } else {
-      setModel('Llama3')
+      if (model === 'Llama3') {
+        setModel('OpenAI')
+      } else {
+        setModel('Llama3')
+      }
     }
   }
 
@@ -156,6 +162,24 @@ export const ChatProvider: FC<ChatProviderProps> = ({ children }) => {
     addResponse(msg)
   }
 
+  const addUploadResponse = async (link: string) => {
+    const time = new Date().toLocaleTimeString().slice(0, 5)
+    const response = {
+      from: 'AI',
+      msg: (
+        <Box display='flex' justifyContent='space-between' alignContent='center' alignItems='center'>
+          You have uploaded a file
+          <Button variant='contained' href={link} target='_blank' color='success'>
+            Open
+          </Button>
+        </Box>
+      ),
+      time
+    }
+
+    setChats(prev => [...prev, response])
+  }
+
   return (
     <ChatContext.Provider
       value={{
@@ -165,7 +189,8 @@ export const ChatProvider: FC<ChatProviderProps> = ({ children }) => {
         chats,
         onChangeMessage: setMessage,
         onChangeModel,
-        onSendMessage: addMessage
+        onSendMessage: addMessage,
+        onUploadMessage: addUploadResponse
       }}
     >
       {children}

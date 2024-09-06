@@ -13,6 +13,7 @@ import { SnackbarProvider } from 'notistack'
 import { CssBaseline } from '@mui/material'
 import { AppConfig } from '@/src/config'
 import { NetworkId } from '@near-wallet-selector/core'
+import { AssetProvider } from '@/src/contexts/AssetContext'
 
 const wallet = new Wallet({
   createAccessKeyFor: AppConfig.NEAR_CONTRACTS.BURN,
@@ -48,12 +49,14 @@ export default function Home() {
     <main className='flex min-h-screen flex-col items-center justify-between p-24'>
       <SnackbarProvider>
         <NearContext.Provider value={{ wallet, signedAccountId }}>
-          <ContractProvider>
-            <ThemeProvider theme={themes}>
-              <CssBaseline />
-              <Chat isMobile={isMobile} />
-            </ThemeProvider>
-          </ContractProvider>
+          <AssetProvider>
+            <ContractProvider>
+              <ThemeProvider theme={themes}>
+                <CssBaseline />
+                <Chat isMobile={isMobile} />
+              </ThemeProvider>
+            </ContractProvider>
+          </AssetProvider>
         </NearContext.Provider>
       </SnackbarProvider>
     </main>
