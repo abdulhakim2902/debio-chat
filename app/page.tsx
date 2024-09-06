@@ -15,8 +15,8 @@ import { AppConfig } from '@/src/config'
 import { NetworkId } from '@near-wallet-selector/core'
 
 const wallet = new Wallet({
-  createAccessKeyFor: AppConfig.CONTRACT.BURN,
-  networkId: AppConfig.NETWORK as NetworkId,
+  createAccessKeyFor: AppConfig.NEAR_CONTRACTS.BURN,
+  networkId: AppConfig.NEAR_NETWORK as NetworkId,
   methodNames: ['converse']
 })
 
