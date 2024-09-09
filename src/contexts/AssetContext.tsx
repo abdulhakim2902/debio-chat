@@ -36,27 +36,36 @@ type AssetProviderProps = {
 }
 
 const identity = Ed25519KeyIdentity.fromSecretKey(Buffer.from(AppConfig.STORAGE_SECRET_KEY))
+const agent = HttpAgent.createSync({
+  host: `https://${AppConfig.STORAGE_HOST}`,
+  identity
+})
+
+const assetManager = new AssetManager({ canisterId: AppConfig.STORAGE_CANISTER_ID, agent })
 
 export const AssetProvider: FC<AssetProviderProps> = ({ children }) => {
   const [file, setFile] = useState<File>()
   const [isUploaded, setIsUploaded] = useState<boolean>(false)
   const [isUploading, setIsUploading] = useState<boolean>(false)
-  const [assetManager, setAssetManager] = useState<AssetManager>()
-
-  const { signedAccountId } = useNearWallet()
 
   useEffect(() => {
-    if (signedAccountId) {
-      const agent = HttpAgent.createSync({
-        host: `https://${AppConfig.STORAGE_HOST}`,
-        identity
-      })
+    if (assetManager) {
+      assetManager.list().then(console.log)
+      const oneDayInNs = BigInt(24 * 60 * 60) * BigInt(Math.pow(10, 9))
+      const interval = setInterval(async () => {
+        const nowInNs = BigInt(Date.now()) * BigInt(Math.pow(10, 6))
+        const assets = await assetManager.list()
 
-      const assetManager = new AssetManager({ canisterId: AppConfig.STORAGE_CANISTER_ID, agent })
+        for (const asset of assets) {
+          if (asset.encodings[0].modified + oneDayInNs <= nowInNs) {
+            await assetManager.delete(asset.key)
+          }
+        }
+      }, 60 * 1000)
 
-      setAssetManager(assetManager)
+      return () => clearInterval(interval)
     }
-  }, [signedAccountId])
+  }, [])
 
   const addFile = async (cb?: (data: OnUploadData) => void) => {
     if (isUploaded || isUploading) return
