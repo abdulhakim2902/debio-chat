@@ -43,7 +43,7 @@ export class Wallet {
    * wallet.startUp((signedAccountId) => console.log(signedAccountId));
    */
   constructor(params: WalletParams) {
-    const { networkId = 'testnet', createAccessKeyFor = '', methodNames = [] } = params
+    const { networkId = 'mainnet', createAccessKeyFor = '', methodNames = [] } = params
 
     this.createAccessKeyFor = createAccessKeyFor
     this.networkId = networkId

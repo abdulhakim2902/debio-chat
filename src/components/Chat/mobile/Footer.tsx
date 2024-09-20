@@ -79,7 +79,7 @@ export const FooterChat: FC<FooterProps> = ({ sessions }) => {
         }}
         onChange={event => onChangeMessage(event.target.value)}
         value={message}
-        label='Message Debby'
+        label='Message Debbie'
         variant='filled'
         sx={{ position: 'fixed', left: 13, bottom: 21, right: 70, backgroundColor: 'white', borderRadius: 20 }}
       />

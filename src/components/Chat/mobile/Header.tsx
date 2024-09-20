@@ -17,7 +17,7 @@ export const Header: FC<HeaderProps> = ({ token, conversation }) => {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
-  const [disclaimer, setDisclaimer] = useState<boolean>(false)
+  const [disclaimer, setDisclaimer] = useState<boolean>(true)
 
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(anchorEl ? null : event.currentTarget)
@@ -32,6 +32,12 @@ export const Header: FC<HeaderProps> = ({ token, conversation }) => {
 
     return wallet.signIn()
   }
+
+  const openInNewTab = () => {
+    const newWindow = window.open("https://app.ref.finance/#near|dbio.near", '_blank', 'noopener,noreferrer')
+    if (newWindow) newWindow.opener = null
+  }
+  
 
   const handleChange = () => {
     onChangeModel()
@@ -68,6 +74,7 @@ export const Header: FC<HeaderProps> = ({ token, conversation }) => {
               label='Buy $DBIO on Ref.Finance'
               color='secondary'
               size='small'
+              onClick={openInNewTab}
               sx={{
                 position: 'absolute',
                 top: 30,

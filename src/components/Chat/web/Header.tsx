@@ -26,6 +26,11 @@ export const Header = () => {
   const [buyAmount, setBuyAmount] = useState('')
   const [label, setLabel] = useState<string | boolean>(true)
 
+  const openInNewTab = () => {
+    const newWindow = window.open("https://app.ref.finance/#near|dbio.near", '_blank', 'noopener,noreferrer')
+    if (newWindow) newWindow.opener = null
+  }
+
   const handleCloseBurnModal = () => {
     setOpenBurnModal(false)
     setBurnAmount('')
@@ -100,7 +105,7 @@ export const Header = () => {
           <Button variant='outlined' color='error' disabled={!signedAccountId} onClick={() => setOpenBurnModal(true)}>
             Burn
           </Button>
-          <Button variant='contained' color='info' disabled={!signedAccountId} onClick={() => setOpenBuyModal(true)}>
+          <Button variant='contained' color='info' disabled={!signedAccountId} onClick={openInNewTab}>
             Buy {token.symbol}
           </Button>
         </Box>

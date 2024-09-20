@@ -23,7 +23,7 @@ export type ChatContextValue = {
 export const ChatContext = createContext<ChatContextValue>({
   loading: false,
   message: '',
-  model: 'Llama3',
+  model: 'OpenAI',
   chats: [],
 
   onChangeMessage: () => {},
@@ -50,7 +50,7 @@ export const ChatProvider: FC<ChatProviderProps> = ({ children }) => {
   const [model, setModel] = useState('Llama3')
   const [isChatting, setIsChatting] = useState(false)
   const [chats, setChats] = useState<ChatType[]>([
-    { from: 'AI', msg: "Hello! I'm Debbie, your personal genetic analyst.", time: '15:55' }
+    { from: 'AI', msg: "Hi, I'm Debbie, your wellness assistant. How can I help you?", time: '15:55' }
   ])
 
   const onChangeModel = (mod?: string) => {
