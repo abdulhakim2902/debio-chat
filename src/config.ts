@@ -9,16 +9,3 @@ export abstract class AppConfig {
   static STORAGE_HOST = String(process.env.STORAGE_HOST)
   static STORAGE_CANISTER_ID = String(process.env.STORAGE_CANISTER_ID)
 }
-const burnContractPerNetwork = {
-  mainnet: 'dbioburner.near',
-  testnet: 'dbio-burn5.testnet'
-}
-
-const tokenContractPerNetwork = {
-  mainnet: 'dbio.near',
-  testnet: 'debio-token5.testnet'
-}
-
-export const NetworkId = 'mainnet'
-export const BurnContract = burnContractPerNetwork[NetworkId]
-export const TokenContract = tokenContractPerNetwork[NetworkId]
