@@ -8,6 +8,8 @@ import {
   List,
   ListItem,
   ListItemText,
+  Menu,
+  MenuItem,
   TextField,
   Typography
 } from '@mui/material'
@@ -15,10 +17,22 @@ import { useChat } from '@/src/contexts/ChatContext'
 
 import SendIcon from '@mui/icons-material/Send'
 import { useNearWallet } from '@/src/contexts/NearContext'
+import { useState } from 'react'
+import { useAsset } from '@/src/contexts/AssetContext'
 
 export const Chat = () => {
   const { signedAccountId } = useNearWallet()
-  const { model, message, chats, loading, onChangeMessage, onChangeModel, onSendMessage } = useChat()
+  const { file, addFile, uploadFile, isUploading, isUploaded } = useAsset()
+  const { model, message, chats, loading, onChangeMessage, onChangeModel, onSendMessage, onUploadMessage } = useChat()
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+
+  const open = Boolean(anchorEl)
+
+  const handleModel = (mod: string) => {
+    onChangeModel(mod)
+    setAnchorEl(null)
+  }
 
   return (
     <Box
@@ -35,13 +49,44 @@ export const Chat = () => {
             Experimental Chat
           </Typography>
           <Box display='flex' justifyContent='space-between' sx={{ width: '100%', marginBottom: 1 }}>
-            <Button variant='outlined' color='secondary' disableRipple sx={{ cursor: 'default' }}>
-              {model}
+            <Button
+              variant='outlined'
+              color='success'
+              sx={{ width: '120px' }}
+              disableRipple={isUploaded || isUploading}
+              onClick={() => addFile(data => onUploadMessage(data))}
+            >
+              Add File
             </Button>
 
-            <Button variant='contained' color='secondary' onClick={onChangeModel} disabled={!signedAccountId}>
-              Change Model
-            </Button>
+            <Box width={90}>
+              <Button
+                fullWidth
+                variant='contained'
+                color='warning'
+                onClick={event => setAnchorEl(event.currentTarget)}
+                disabled={!signedAccountId}
+              >
+                {model}
+              </Button>
+              <Menu
+                id='basic-menu'
+                anchorEl={anchorEl}
+                open={open}
+                onClose={() => setAnchorEl(null)}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'center'
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'center'
+                }}
+              >
+                <MenuItem onClick={() => handleModel('Llama3')}>Llama3</MenuItem>
+                <MenuItem onClick={() => handleModel('OpenAI')}>OpenAI</MenuItem>
+              </Menu>
+            </Box>
           </Box>
         </Box>
       </Grid>

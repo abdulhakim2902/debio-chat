@@ -1,9 +1,9 @@
 import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 import { useNearWallet } from './NearContext'
-import { BurnContract, TokenContract } from '@/src/config'
 import { formatUnits, parseUnits } from '@/src/utils/number'
 import { enqueueSnackbar } from 'notistack'
 import { parseNearAmount } from 'near-api-js/lib/utils/format'
+import { AppConfig } from '../config'
 
 type ContractContextValue = {
   loading: {
@@ -70,16 +70,16 @@ export const ContractProvider: FC<ContractProviderProps> = ({ children }) => {
 
       const [tokenBalance, tokenMetadata, conversation] = await Promise.all([
         wallet.viewMethod({
-          contractId: TokenContract,
+          contractId: AppConfig.NEAR_CONTRACTS.TOKEN,
           method: 'ft_balance_of',
           args: { account_id: signedAccountId }
         }),
-        wallet.viewMethod({ contractId: TokenContract, method: 'ft_metadata' }),
+        wallet.viewMethod({ contractId: AppConfig.NEAR_CONTRACTS.TOKEN, method: 'ft_metadata' }),
         wallet.viewMethod({
-          contractId: BurnContract,
+          contractId: AppConfig.NEAR_CONTRACTS.BURN,
           method: 'balance_of',
           args: {
-            token_id: TokenContract,
+            token_id: AppConfig.NEAR_CONTRACTS.TOKEN,
             account_id: signedAccountId
           }
         })
@@ -123,21 +123,21 @@ export const ContractProvider: FC<ContractProviderProps> = ({ children }) => {
 
       await wallet.callMethods([
         {
-          contractId: TokenContract,
+          contractId: AppConfig.NEAR_CONTRACTS.TOKEN,
           method: 'storage_deposit',
-          args: { account_id: BurnContract },
+          args: { account_id: AppConfig.NEAR_CONTRACTS.BURN },
           deposit: parseNearAmount('0.00125') || '0'
         },
         {
-          contractId: TokenContract,
+          contractId: AppConfig.NEAR_CONTRACTS.TOKEN,
           method: 'ft_transfer_call',
-          args: { receiver_id: BurnContract, amount: tokenAmount, msg: '' },
+          args: { receiver_id: AppConfig.NEAR_CONTRACTS.BURN, amount: tokenAmount, msg: '' },
           deposit: '1'
         },
         {
-          contractId: BurnContract,
+          contractId: AppConfig.NEAR_CONTRACTS.BURN,
           method: 'burn',
-          args: { token_id: TokenContract },
+          args: { token_id: AppConfig.NEAR_CONTRACTS.TOKEN },
           deposit: '1'
         }
       ])
@@ -163,9 +163,9 @@ export const ContractProvider: FC<ContractProviderProps> = ({ children }) => {
       }
 
       const account = await wallet.callMethod({
-        contractId: BurnContract,
+        contractId: AppConfig.NEAR_CONTRACTS.BURN,
         method: 'converse',
-        args: { token_id: TokenContract, amount: conversationAmount }
+        args: { token_id: AppConfig.NEAR_CONTRACTS.TOKEN, amount: conversationAmount }
       })
 
       setConversation(prev => ({
@@ -194,7 +194,7 @@ export const ContractProvider: FC<ContractProviderProps> = ({ children }) => {
       const tokenAmount = parseUnits(amount, token.decimals)
 
       await wallet.callMethod({
-        contractId: TokenContract,
+        contractId: AppConfig.NEAR_CONTRACTS.TOKEN,
         method: 'buy',
         args: { amount: tokenAmount },
         deposit: String(parseNearAmount('0.00125'))
