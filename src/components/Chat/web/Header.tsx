@@ -27,7 +27,7 @@ export const Header = () => {
   const [label, setLabel] = useState<string | boolean>(true)
 
   const openInNewTab = () => {
-    const newWindow = window.open("https://app.ref.finance/#near|dbio.near", '_blank', 'noopener,noreferrer')
+    const newWindow = window.open('https://app.ref.finance/#near|dbio.near', '_blank', 'noopener,noreferrer')
     if (newWindow) newWindow.opener = null
   }
 
