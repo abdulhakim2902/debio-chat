@@ -22,7 +22,7 @@ import { useAsset } from '@/src/contexts/AssetContext'
 
 export const Chat = () => {
   const { signedAccountId } = useNearWallet()
-  const { file, addFile, uploadFile, isUploading, isUploaded } = useAsset()
+  const { addFile, isUploading, isUploaded } = useAsset()
   const { model, message, chats, loading, onChangeMessage, onChangeModel, onSendMessage, onUploadMessage } = useChat()
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -53,6 +53,7 @@ export const Chat = () => {
               variant='outlined'
               color='success'
               sx={{ width: '120px' }}
+              disabled={!signedAccountId}
               disableRipple={isUploaded || isUploading}
               onClick={() => addFile(data => onUploadMessage(data))}
             >

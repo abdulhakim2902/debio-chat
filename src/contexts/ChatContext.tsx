@@ -1,12 +1,13 @@
 import axios from 'axios'
 
-import { createContext, FC, ReactNode, useContext, useState } from 'react'
+import { createContext, FC, Fragment, ReactNode, useContext, useEffect, useState } from 'react'
 import { useContract } from './ContractContext'
 import { enqueueSnackbar } from 'notistack'
 import { Box, Button, CircularProgress, LinearProgress, Typography } from '@mui/material'
 import { OnUploadData, useAsset } from './AssetContext'
 
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined'
+import { AppConfig } from '../config'
 
 export type ChatContextValue = {
   loading: boolean
@@ -37,6 +38,7 @@ type ChatProviderProps = {
 }
 
 type ChatType = {
+  key?: string
   from: string
   msg: ReactNode | string
   time: string
@@ -44,7 +46,7 @@ type ChatType = {
 
 export const ChatProvider: FC<ChatProviderProps> = ({ children }) => {
   const { conversation, converse } = useContract()
-  const { file, uploadFile } = useAsset()
+  const { assets, uploadFile, removeFile } = useAsset()
 
   const [message, setMessage] = useState('')
   const [model, setModel] = useState('Llama3')
@@ -52,6 +54,76 @@ export const ChatProvider: FC<ChatProviderProps> = ({ children }) => {
   const [chats, setChats] = useState<ChatType[]>([
     { from: 'AI', msg: "Hi, I'm Debbie, your wellness assistant. How can I help you?", time: '15:55' }
   ])
+
+  useEffect(() => {
+    const time = new Date().toLocaleTimeString().slice(0, 5)
+
+    setChats(prev => {
+      const chats = assets.map(asset => {
+        const filename = asset.filename
+        const link = `https://${AppConfig.STORAGE_CANISTER_ID}.${AppConfig.STORAGE_HOST}${asset.key}`
+
+        let size = asset.size
+        let unit = 'bytes'
+        if (size > 1_000_000) {
+          size = size / 1_000_000
+          unit = 'MB'
+        } else if (size > 1_000) {
+          size = size / 1_000
+          unit = 'KB'
+        }
+
+        return {
+          key: asset.key,
+          from: 'ME',
+          msg: (
+            <Box
+              display='flex'
+              justifyContent='space-between'
+              alignContent='center'
+              alignItems='center'
+              padding={1}
+              borderRadius={2}
+              boxShadow={2}
+            >
+              <Box padding={1} display='flex' flexDirection='row' alignContent='center' alignItems='center'>
+                <DescriptionOutlinedIcon fontSize='large' />
+                <Box>
+                  <Typography fontSize={12} sx={{ width: '250px' }}>
+                    {filename}
+                  </Typography>
+                  <Typography fontSize={10}>
+                    {size} {unit}
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Box paddingRight={2} sx={{ width: '100%' }} display='flex' justifyContent='flex-end'>
+                <Button
+                  variant='outlined'
+                  color='error'
+                  onClick={() => {
+                    removeFile(asset.key, () => {
+                      setChats(prev => prev.filter(chat => chat.key !== asset.key))
+                    })
+                  }}
+                >
+                  Remove
+                </Button>
+                <Button sx={{ marginLeft: 2 }} variant='contained' href={link} target='_blank' color='success'>
+                  Open
+                </Button>
+              </Box>
+            </Box>
+          ),
+          time
+        }
+      })
+
+      return [...prev, ...chats]
+    })
+    /* eslint-disable */
+  }, [assets])
 
   const onChangeModel = (mod?: string) => {
     if (mod) {
@@ -167,47 +239,70 @@ export const ChatProvider: FC<ChatProviderProps> = ({ children }) => {
   }
 
   const addUploadResponse = async (data: OnUploadData) => {
-    const { isLoading, progress, file, link, init } = data
+    const { isLoading, progress, file, link, init, key = '' } = data
+
+    let size = file.size
+    let unit = 'bytes'
+    if (size > 1_000_000) {
+      size = size / 1_000_000
+      unit = 'MB'
+    } else if (size > 1_000) {
+      size = size / 1_000
+      unit = 'KB'
+    }
 
     setChats(prev => {
       const time = new Date().toLocaleTimeString().slice(0, 5)
       const response = {
+        key: key,
         from: 'ME',
         msg: (
-          <Box
-            display='flex'
-            justifyContent='space-between'
-            alignContent='center'
-            alignItems='center'
-            padding={1}
-            borderRadius={2}
-            boxShadow={2}
-          >
-            <Box padding={1}>
-              <DescriptionOutlinedIcon fontSize='large' />
-              <Typography fontSize={12}>{file.name}</Typography>
+          <Box padding={1} borderRadius={2} boxShadow={2}>
+            <Box display='flex' justifyContent='space-between' alignContent='center' alignItems='center'>
+              <Box padding={1} display='flex' flexDirection='row' alignContent='center' alignItems='center'>
+                <DescriptionOutlinedIcon fontSize='large' />
+                <Box>
+                  <Typography fontSize={12} sx={{ width: '300px' }}>
+                    {file.name}
+                  </Typography>
+                  <Typography fontSize={10}>
+                    {size} {unit}
+                  </Typography>
+                </Box>
+              </Box>
+              {!isLoading && link && progress >= 100 && (
+                <Box paddingRight={2} sx={{ width: '100%' }} display='flex' justifyContent='flex-end'>
+                  <Button
+                    variant='outlined'
+                    color='error'
+                    onClick={() => {
+                      removeFile(key, () => {
+                        setChats(prev => prev.filter(chat => chat.key !== key))
+                      })
+                    }}
+                  >
+                    Remove
+                  </Button>
+                  <Button sx={{ marginLeft: 2 }} variant='contained' href={link} target='_blank' color='success'>
+                    Open
+                  </Button>
+                </Box>
+              )}
+              {init && (
+                <Box paddingRight={2} sx={{ width: '100%' }} display='flex' justifyContent='flex-end'>
+                  <Button
+                    variant='contained'
+                    onClick={() => file && uploadFile(file, data => addUploadResponse(data))}
+                    color='success'
+                  >
+                    Upload
+                  </Button>
+                </Box>
+              )}
             </Box>
             {isLoading && progress <= 100 && (
-              <Box marginX={2} sx={{ width: '100%' }}>
+              <Box sx={{ width: '100%' }} padding={2}>
                 <LinearProgress variant='determinate' sx={{ height: 10, borderRadius: 5 }} value={progress} />
-              </Box>
-            )}
-            {!isLoading && link && progress >= 100 && (
-              <Box paddingRight={2} sx={{ width: '100%' }} display='flex' justifyContent='flex-end'>
-                <Button variant='contained' href={link} target='_blank' color='success'>
-                  Open
-                </Button>
-              </Box>
-            )}
-            {init && (
-              <Box paddingRight={2} sx={{ width: '100%' }} display='flex' justifyContent='flex-end'>
-                <Button
-                  variant='contained'
-                  onClick={() => file && uploadFile(file, data => addUploadResponse(data))}
-                  color='success'
-                >
-                  Upload
-                </Button>
               </Box>
             )}
           </Box>
