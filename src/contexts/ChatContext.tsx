@@ -291,6 +291,16 @@ export const ChatProvider: FC<ChatProviderProps> = ({ children }) => {
               {init && (
                 <Box paddingRight={2} sx={{ width: '100%' }} display='flex' justifyContent='flex-end'>
                   <Button
+                    variant='outlined'
+                    color='error'
+                    onClick={() => {
+                      setChats(prev => prev.filter(chat => chat.key !== key))
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    sx={{ marginLeft: 2 }}
                     variant='contained'
                     onClick={() => file && uploadFile(file, data => addUploadResponse(data))}
                     color='success'
